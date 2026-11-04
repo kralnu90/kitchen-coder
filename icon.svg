@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#1b2126"/>
+  <g fill="#ffffff">
+    <circle cx="176" cy="176" r="72"/><circle cx="256" cy="140" r="84"/><circle cx="336" cy="176" r="72"/>
+    <rect x="150" y="170" width="212" height="120"/>
+  </g>
+  <rect x="140" y="272" width="232" height="44" rx="10" fill="#d46f0c"/>
+  <text x="256" y="440" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-weight="bold" font-size="104" fill="#f0912e">&gt;_py</text>
+</svg>

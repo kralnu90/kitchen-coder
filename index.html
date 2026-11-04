@@ -1,0 +1,1351 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Learn Python by clearing tickets on a busy kitchen pass. Real Python 3 in your browser.">
+<meta name="theme-color" content="#d46f0c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-512.png">
+<title>Python Kitchen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+</style>
+<style>
+/* Layout: the pass. Tiled back wall, heat lamps, the chef behind a steel counter with the ticket rail on it. Below: the stove (editor) and the ticket. Heat-lamp amber is the one accent. */
+:root {
+  --bg: #e6ebee; --steel: #d3dadf; --steel-hi: #f4f7f9; --steel-lo: #a9b4bc; --line: #b7c1c9;
+  --fg: #1d2429; --muted: #56636d;
+  --tile: #f2f4f2; --tile-line: #d5dbd9;
+  --paper: #fdfdfb; --paper-ink: #22262a;
+  --lamp: #d46f0c; --lamp-soft: #fbe5cd; --glow: rgba(255,170,60,.45);
+  --code-bg: #1b2126; --code-fg: #e4e9ec; --code-dim: #8796a1;
+  --ok: #2c8749; --ok-soft: #dbefe1; --bad: #b5372f; --bad-soft: #f6dcd9;
+  --display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "DejaVu Sans Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #13171a; --steel: #232a2f; --steel-hi: #3a444b; --steel-lo: #12161a; --line: #343e45; --fg: #e3e8eb; --muted: #97a3ab;
+  --tile: #1f2528; --tile-line: #2b3337; --paper: #272c30; --paper-ink: #e8ebed;
+  --lamp: #f0912e; --lamp-soft: #3a2a19; --glow: rgba(255,150,40,.35);
+  --code-bg: #0c0f12; --ok: #5cc27c; --ok-soft: #163222; --bad: #ec6b61; --bad-soft: #3b1d1b; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #13171a; --steel: #232a2f; --steel-hi: #3a444b; --steel-lo: #12161a; --line: #343e45; --fg: #e3e8eb; --muted: #97a3ab;
+  --tile: #1f2528; --tile-line: #2b3337; --paper: #272c30; --paper-ink: #e8ebed;
+  --lamp: #f0912e; --lamp-soft: #3a2a19; --glow: rgba(255,150,40,.35);
+  --code-bg: #0c0f12; --ok: #5cc27c; --ok-soft: #163222; --bad: #ec6b61; --bad-soft: #3b1d1b; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.55; }
+.gutter-x { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.inner { max-width: 1240px; margin: 0 auto; }
+code { font-family: var(--mono); font-size: .88em; background: var(--steel); padding: 1px 5px; border-radius: 3px; }
+button { font: inherit; }
+button:focus-visible, textarea:focus-visible, a:focus-visible { outline: 3px solid var(--lamp); outline-offset: 2px; }
+
+/* ---------- The pass (scene) ---------- */
+.scene { position: relative; background-color: var(--tile);
+  background-image: linear-gradient(var(--tile-line) 2px, transparent 2px), linear-gradient(90deg, var(--tile-line) 2px, transparent 2px);
+  background-size: 56px 28px; overflow: hidden; }
+.scene .inner { position: relative; padding-top: 14px; }
+.topbar { display: flex; justify-content: space-between; align-items: start; gap: 12px; flex-wrap: wrap; position: relative; z-index: 3; }
+h1 { font-family: var(--display); font-weight: 900; font-size: clamp(2rem, 6vw, 3.2rem); line-height: .9; margin: 0; text-transform: uppercase; background: var(--paper); color: var(--paper-ink); padding: 6px 12px 8px; box-shadow: 0 2px 0 var(--line); }
+h1 span { color: var(--lamp); }
+.rank { background: var(--paper); color: var(--paper-ink); padding: 8px 12px; min-width: 210px; display: grid; gap: 3px; box-shadow: 0 2px 0 var(--line); }
+.label { font-size: .7rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
+.rank-name { font-family: var(--display); font-weight: 700; font-size: 1.4rem; line-height: 1; }
+.bar { height: 6px; background: var(--steel); border-radius: 3px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--lamp); width: 0; transition: width .4s; }
+
+.lamps { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+.lamp { position: absolute; top: 0; width: 84px; transform: translateX(-50%); }
+.lamp::before { content: ""; display: block; width: 3px; height: 54px; margin: 0 auto; background: var(--steel-lo); }
+.lamp b { display: block; height: 26px; border-radius: 6px 6px 44px 44px; background: linear-gradient(var(--steel-hi), var(--steel-lo)); box-shadow: 0 2px 0 rgba(0,0,0,.15); }
+.lamp b::after { content: ""; position: absolute; left: 50%; top: 74px; width: 260px; height: 300px; transform: translateX(-50%); background: radial-gradient(ellipse at top, var(--glow), transparent 65%); }
+.lamp i { position: absolute; left: 50%; top: 76px; width: 40px; height: 8px; transform: translateX(-50%); border-radius: 50%; background: #ffb347; box-shadow: 0 0 18px 6px rgba(255,170,60,.6); }
+
+.stage { position: relative; z-index: 2; display: flex; align-items: flex-end; gap: 14px; margin-top: 4px; }
+.chef { width: 190px; flex: none; margin-bottom: -46px; }
+.chef svg { width: 100%; height: auto; display: block; }
+.bubble { position: relative; background: var(--paper); color: var(--paper-ink); border: 3px solid var(--paper-ink); border-radius: 18px; padding: 12px 16px; font-family: var(--display); font-weight: 700; font-size: clamp(1.15rem, 3.2vw, 1.55rem); line-height: 1.15; text-transform: uppercase; letter-spacing: .01em; margin-bottom: 70px; max-width: 640px; min-width: 0; flex: 1; }
+.bubble::before { content: ""; position: absolute; left: -16px; bottom: 18px; border: 9px solid transparent; border-right: 14px solid var(--paper-ink); }
+.bubble::after { content: ""; position: absolute; left: -9px; bottom: 21px; border: 6px solid transparent; border-right: 10px solid var(--paper); }
+.bubble small { display: block; font-family: var(--body); font-size: .72rem; letter-spacing: .1em; color: var(--lamp); margin-bottom: 2px; }
+#mouth { transform-box: fill-box; transform-origin: center; }
+.talking #mouth { animation: talk .18s infinite alternate; }
+@keyframes talk { from { transform: scaleY(.3); } to { transform: scaleY(1.6); } }
+.brows-angry .brow-l { transform: rotate(14deg); } .brows-angry .brow-r { transform: rotate(-14deg); }
+.brows-happy .brow-l { transform: rotate(-8deg) translateY(-3px); } .brows-happy .brow-r { transform: rotate(8deg) translateY(-3px); }
+.brow-l, .brow-r { transform-box: fill-box; transform-origin: center; transition: transform .2s; }
+
+.pass { position: relative; z-index: 3; background: linear-gradient(var(--steel-hi), var(--steel) 30%, var(--steel-lo)); border-top: 2px solid var(--steel-hi); box-shadow: 0 -6px 14px rgba(0,0,0,.12); }
+.pass .inner { padding-block: 10px 12px; }
+.rail { position: relative; overflow-x: auto; padding: 10px 2px 4px; }
+.rail::before { content: ""; position: absolute; left: 0; right: 0; top: 10px; height: 8px; background: linear-gradient(var(--steel-hi), var(--steel-lo)); border-radius: 4px; min-width: 100%; }
+.rail-inner { display: flex; gap: 6px; align-items: flex-start; min-width: max-content; position: relative; }
+.svc { font-family: var(--display); font-weight: 700; font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); padding: 14px 4px 0 10px; white-space: nowrap; }
+.tab { font-family: var(--mono); font-size: .78rem; border: 1px solid var(--line); border-top: 0; background: var(--paper); color: var(--paper-ink); padding: 12px 8px 10px; cursor: pointer; position: relative; min-width: 44px; text-align: center; box-shadow: 0 2px 3px rgba(0,0,0,.12); }
+.tab:hover:not(.locked) { transform: translateY(2px); }
+.tab.done { color: var(--ok); font-weight: 600; }
+.tab.done::after { content: "✓"; display: block; font-size: .7rem; }
+.tab.active { background: var(--lamp); color: #fff; border-color: var(--lamp); }
+.tab.locked { opacity: .45; cursor: not-allowed; }
+
+/* ---------- Nav ---------- */
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+.nav .inner { display: flex; gap: 6px; align-items: center; padding-block: 8px; overflow-x: auto; }
+.navbtn { font-family: var(--display); font-weight: 700; font-size: 1.1rem; letter-spacing: .04em; text-transform: uppercase; background: none; border: 0; border-bottom: 3px solid transparent; color: var(--muted); padding: 4px 10px; cursor: pointer; white-space: nowrap; }
+.navbtn[aria-current="page"] { color: var(--fg); border-color: var(--lamp); }
+.voice { margin-left: auto; font-size: .82rem; border: 1px solid var(--line); background: var(--paper); color: var(--fg); border-radius: 20px; padding: 5px 12px; cursor: pointer; white-space: nowrap; }
+.voice[aria-pressed="true"] { border-color: var(--lamp); color: var(--lamp); }
+
+/* ---------- Views ---------- */
+.view .inner { padding-block: 18px 40px; }
+.cols { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 18px; align-items: start; }
+@media (max-width: 880px) { .cols { grid-template-columns: minmax(0, 1fr); } }
+
+.ticket { background: var(--paper); color: var(--paper-ink); padding: 20px 20px 28px; min-width: 0; box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  -webkit-mask: radial-gradient(circle 6px at 50% 100%, transparent 98%, #000) 0 0/16px 100% repeat-x; mask: radial-gradient(circle 6px at 50% 100%, transparent 98%, #000) 0 0/16px 100% repeat-x; }
+.ticket-head { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-family: var(--mono); font-size: .74rem; color: var(--muted); border-bottom: 2px dashed var(--line); padding-bottom: 8px; margin-bottom: 12px; }
+.ticket h2 { font-family: var(--display); font-weight: 900; font-size: 2rem; line-height: 1; margin: 0 0 4px; text-transform: uppercase; text-wrap: balance; }
+.concept { font-size: .76rem; text-transform: uppercase; letter-spacing: .12em; color: var(--lamp); font-weight: 700; margin-bottom: 12px; }
+.ticket p, .ticket li { max-width: 65ch; }
+.ticket p { margin: 0 0 10px; }
+.sec { border-top: 2px dashed var(--line); margin-top: 14px; padding-top: 12px; }
+.sec h3, details summary { font-family: var(--display); font-weight: 700; font-size: 1.15rem; text-transform: uppercase; letter-spacing: .04em; margin: 0 0 6px; }
+details summary { cursor: pointer; color: var(--fg); }
+details summary::marker { color: var(--lamp); }
+details[open] summary { margin-bottom: 8px; }
+.mistakes { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.expect { font-family: var(--mono); font-size: .85rem; background: var(--steel); padding: 8px 12px; border-left: 3px solid var(--lamp); white-space: pre-wrap; margin-bottom: 10px; }
+.ex-wrap { position: relative; margin: 0 0 12px; }
+pre.ex { font-family: var(--mono); font-size: .84rem; background: var(--code-bg); color: var(--code-fg); padding: 12px 14px; border-radius: 4px; overflow-x: auto; margin: 0; line-height: 1.55; }
+pre.ex .cm { color: var(--code-dim); }
+.try { position: absolute; top: 6px; right: 6px; font-size: .72rem; font-family: var(--mono); background: var(--lamp); color: #fff; border: 0; border-radius: 3px; padding: 3px 8px; cursor: pointer; }
+.hints { display: grid; gap: 8px; margin-top: 12px; }
+.hint { background: var(--lamp-soft); border-radius: 4px; padding: 8px 12px; font-size: .93rem; }
+.hint b { font-family: var(--mono); font-size: .74rem; color: var(--lamp); margin-right: 6px; }
+table.ops { border-collapse: collapse; width: 100%; font-size: .9rem; margin-bottom: 10px; }
+table.ops td, table.ops th { border-bottom: 1px solid var(--line); padding: 5px 8px; text-align: left; vertical-align: top; }
+table.ops th { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.tbl { overflow-x: auto; }
+
+.stove { display: grid; gap: 10px; min-width: 0; }
+.editor-wrap { background: var(--code-bg); border-radius: 6px; overflow: hidden; border: 1px solid var(--line); }
+.editor-bar { display: flex; justify-content: space-between; gap: 8px; align-items: center; padding: 8px 12px; font-family: var(--mono); font-size: .74rem; color: var(--code-dim); border-bottom: 1px solid #2c353c; }
+.editor { display: flex; }
+.gut { font-family: var(--mono); font-size: .92rem; line-height: 1.6; color: #56636c; text-align: right; padding: 12px 8px 12px 12px; user-select: none; white-space: pre; }
+textarea.code { flex: 1; min-width: 0; min-height: 260px; resize: none; overflow-y: hidden; border: 0; background: transparent; color: var(--code-fg); font-family: var(--mono); font-size: .92rem; line-height: 1.6; padding: 12px 12px 12px 4px; tab-size: 4; white-space: pre; overflow-x: auto; caret-color: var(--lamp); }
+textarea.code:focus { outline: none; }
+.keys { display: flex; flex-wrap: wrap; gap: 6px; }
+.keys button { font-family: var(--mono); font-size: .9rem; min-width: 38px; padding: 6px 8px; border: 1px solid var(--line); background: var(--paper); color: var(--fg); border-radius: 4px; cursor: pointer; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn { font-family: var(--display); font-weight: 700; font-size: 1.1rem; letter-spacing: .05em; text-transform: uppercase; padding: 9px 16px; border-radius: 4px; border: 1px solid var(--line); background: var(--paper); color: var(--fg); cursor: pointer; }
+.btn.primary { background: var(--lamp); border-color: var(--lamp); color: #fff; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.console { background: var(--code-bg); color: var(--code-fg); border-radius: 6px; padding: 12px 14px; font-family: var(--mono); font-size: .86rem; min-height: 90px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.console .dim { color: var(--code-dim); } .console .in { color: #f3b766; } .console .er { color: #ff8a80; }
+.verdict { border-radius: 6px; padding: 12px 14px; display: grid; gap: 6px; }
+.verdict.ok { background: var(--ok-soft); border: 1px solid var(--ok); }
+.verdict.bad { background: var(--bad-soft); border: 1px solid var(--bad); }
+.verdict strong { font-family: var(--display); font-size: 1.3rem; text-transform: uppercase; }
+.verdict.ok strong { color: var(--ok); } .verdict.bad strong { color: var(--bad); }
+.diff { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; }
+.diff div { min-width: 0; }
+.diff pre { font-family: var(--mono); font-size: .82rem; margin: 2px 0 0; background: var(--paper); color: var(--paper-ink); padding: 6px 8px; border-radius: 3px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.status { font-size: .85rem; color: var(--muted); }
+
+/* practice */
+.cards { display: grid; gap: 8px; }
+.card { text-align: left; background: var(--paper); color: var(--paper-ink); border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; cursor: pointer; display: grid; gap: 2px; }
+.card b { font-family: var(--display); font-size: 1.1rem; text-transform: uppercase; letter-spacing: .03em; }
+.card span { font-size: .85rem; color: var(--muted); }
+.card:hover { border-color: var(--lamp); }
+.panel { background: var(--paper); color: var(--paper-ink); padding: 16px; border-radius: 4px; display: grid; gap: 10px; min-width: 0; }
+.panel h2 { font-family: var(--display); font-weight: 900; font-size: 1.7rem; text-transform: uppercase; line-height: 1; margin: 0; }
+.panel p { margin: 0; }
+textarea.inputs { width: 100%; min-height: 90px; font-family: var(--mono); font-size: .88rem; padding: 8px 10px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--fg); resize: vertical; }
+
+/* cookbook */
+.book { columns: 2 380px; column-gap: 18px; }
+.book section { break-inside: avoid; background: var(--paper); color: var(--paper-ink); padding: 16px 18px; margin: 0 0 18px; border-radius: 4px; display: inline-block; width: 100%; }
+.book h2 { font-family: var(--display); font-weight: 900; font-size: 1.5rem; text-transform: uppercase; margin: 0 0 8px; line-height: 1; }
+.book h2 em { font-style: normal; color: var(--lamp); }
+.book p { margin: 0 0 10px; }
+.book ul { margin: 0 0 10px; padding-left: 20px; }
+.book-intro { max-width: 70ch; margin: 0 0 18px; }
+footer { font-size: .82rem; color: var(--muted); padding-block: 0 30px; }
+
+@media (max-width: 640px) {
+  .stage { flex-direction: column; align-items: stretch; }
+  .chef { width: 130px; margin: 0 auto -40px; order: 2; }
+  .bubble { margin-bottom: 0; order: 1; font-size: 1.15rem; }
+  .bubble::before { left: 50%; bottom: -16px; transform: translateX(-50%); border: 9px solid transparent; border-top: 14px solid var(--paper-ink); }
+  .bubble::after { left: 50%; bottom: -9px; transform: translateX(-50%); border: 6px solid transparent; border-top: 10px solid var(--paper); }
+  .lamp:nth-child(3) { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="scene">
+  <div class="lamps" aria-hidden="true">
+    <div class="lamp" style="left:22%"><b></b><i></i></div>
+    <div class="lamp" style="left:52%"><b></b><i></i></div>
+    <div class="lamp" style="left:82%"><b></b><i></i></div>
+  </div>
+  <div class="inner gutter-x">
+    <div class="topbar">
+      <h1>Python <span>Kitchen</span></h1>
+      <div class="rank">
+        <div class="label">Your brigade rank</div>
+        <div class="rank-name" id="rankName">Kitchen Porter</div>
+        <div class="bar"><i id="rankBar"></i></div>
+        <div class="label" id="rankCount">0 tickets cleared</div>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="chef brows-angry" id="chef" aria-hidden="true">
+        <svg viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
+          <!-- toque -->
+          <rect x="62" y="34" width="76" height="40" rx="6" fill="#ffffff" stroke="#c9d1d6" stroke-width="2"/>
+          <circle cx="70" cy="30" r="20" fill="#ffffff" stroke="#c9d1d6" stroke-width="2"/>
+          <circle cx="100" cy="20" r="24" fill="#ffffff" stroke="#c9d1d6" stroke-width="2"/>
+          <circle cx="130" cy="30" r="20" fill="#ffffff" stroke="#c9d1d6" stroke-width="2"/>
+          <rect x="64" y="40" width="72" height="34" fill="#ffffff"/>
+          <rect x="60" y="66" width="80" height="14" rx="3" fill="#eef1f3" stroke="#c9d1d6" stroke-width="2"/>
+          <!-- ears + head -->
+          <ellipse cx="64" cy="104" rx="8" ry="11" fill="#e2a782"/>
+          <ellipse cx="136" cy="104" rx="8" ry="11" fill="#e2a782"/>
+          <ellipse cx="100" cy="104" rx="36" ry="34" fill="#efb893"/>
+          <!-- brows -->
+          <rect class="brow-l" x="74" y="86" width="22" height="7" rx="3" fill="#4a2f22"/>
+          <rect class="brow-r" x="104" y="86" width="22" height="7" rx="3" fill="#4a2f22"/>
+          <!-- eyes -->
+          <circle cx="86" cy="100" r="4" fill="#1d2429"/>
+          <circle cx="114" cy="100" r="4" fill="#1d2429"/>
+          <!-- nose -->
+          <ellipse cx="100" cy="110" rx="8" ry="7" fill="#e09c76"/>
+          <!-- mouth -->
+          <ellipse id="mouth" cx="100" cy="128" rx="9" ry="4" fill="#6b1f1a"/>
+          <!-- moustache -->
+          <path d="M100 118 C 90 112, 74 114, 66 124 C 62 129, 56 126, 56 120 C 58 130, 70 134, 82 128 C 90 124, 96 122, 100 122 C 104 122, 110 124, 118 128 C 130 134, 142 130, 144 120 C 144 126, 138 129, 134 124 C 126 114, 110 112, 100 118 Z" fill="#4a2f22"/>
+          <!-- jacket -->
+          <path d="M40 250 L44 172 C 46 156, 62 146, 80 142 L100 150 L120 142 C 138 146, 154 156, 156 172 L160 250 Z" fill="#ffffff" stroke="#c9d1d6" stroke-width="2"/>
+          <!-- neckerchief -->
+          <path d="M80 140 L100 160 L120 140 L112 136 L100 146 L88 136 Z" fill="#d46f0c"/>
+          <!-- buttons -->
+          <circle cx="86" cy="172" r="3.5" fill="#1d2429"/><circle cx="114" cy="172" r="3.5" fill="#1d2429"/>
+          <circle cx="86" cy="188" r="3.5" fill="#1d2429"/><circle cx="114" cy="188" r="3.5" fill="#1d2429"/>
+          <!-- crossed arms -->
+          <rect x="46" y="196" width="108" height="26" rx="13" fill="#f4f6f7" stroke="#c9d1d6" stroke-width="2"/>
+          <rect x="52" y="210" width="96" height="24" rx="12" fill="#ffffff" stroke="#c9d1d6" stroke-width="2"/>
+          <ellipse cx="150" cy="208" rx="11" ry="10" fill="#efb893"/>
+          <ellipse cx="50" cy="222" rx="11" ry="10" fill="#efb893"/>
+        </svg>
+      </div>
+      <div class="bubble" id="bubble" aria-live="polite"><small>Chef Dorran</small><span id="bubbleText">Right. New starter. Get your whites on, we've got tickets coming in.</span></div>
+    </div>
+  </div>
+  <div class="pass">
+    <div class="inner gutter-x">
+      <nav class="rail" aria-label="Tickets on the rail"><div class="rail-inner" id="rail"></div></nav>
+    </div>
+  </div>
+</header>
+
+<div class="nav">
+  <div class="inner gutter-x">
+    <button class="navbtn" data-view="tickets" aria-current="page">Tickets</button>
+    <button class="navbtn" data-view="practice">Practice station</button>
+    <button class="navbtn" data-view="cookbook">Cookbook</button>
+    <button class="voice" id="voice" aria-pressed="true">Chef's voice: on</button>
+  </div>
+</div>
+
+<!-- ================= TICKETS ================= -->
+<main class="view" id="view-tickets">
+  <div class="inner gutter-x cols">
+    <article class="ticket" id="ticket"></article>
+    <section class="stove">
+      <div class="editor-wrap">
+        <div class="editor-bar"><span>your_code.py</span><span class="engine">Lighting the stove…</span></div>
+        <div class="editor"><div class="gut" id="gutT">1</div><textarea class="code" id="codeT" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-label="Ticket code editor"></textarea></div>
+      </div>
+      <div class="keys" data-for="T"></div>
+      <div class="actions">
+        <button class="btn primary run-btn" id="runT" disabled>Send to the pass</button>
+        <button class="btn" id="hintBtn">Ask chef for a hint</button>
+        <button class="btn" id="resetT">Reset code</button>
+      </div>
+      <div id="verdict"></div>
+      <div class="console" id="consoleT"><span class="dim">Output from print() shows up here.</span></div>
+    </section>
+  </div>
+</main>
+
+<!-- ================= PRACTICE ================= -->
+<main class="view" id="view-practice" hidden>
+  <div class="inner gutter-x cols">
+    <aside class="panel">
+      <h2>Practice station</h2>
+      <p>Your own corner of the kitchen. Nothing here is marked, nothing affects your rank. Write anything, run it, break it, fix it. Your code saves on this device.</p>
+      <div class="label">Inputs (one per line)</div>
+      <p class="status">Each time your code calls <code>input()</code>, it takes the next line from here.</p>
+      <textarea class="inputs" id="inputsP" aria-label="Inputs for input()" spellcheck="false"></textarea>
+      <div class="label">Recipe cards to load and play with</div>
+      <div class="cards" id="cards"></div>
+    </aside>
+    <section class="stove">
+      <div class="editor-wrap">
+        <div class="editor-bar"><span>practice.py</span><span class="engine">Lighting the stove…</span></div>
+        <div class="editor"><div class="gut" id="gutP">1</div><textarea class="code" id="codeP" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-label="Practice code editor"></textarea></div>
+      </div>
+      <div class="keys" data-for="P"></div>
+      <div class="actions">
+        <button class="btn primary run-btn" id="runP" disabled>Run it</button>
+        <button class="btn" id="clearP">Clear editor</button>
+      </div>
+      <div class="console" id="consoleP"><span class="dim">Run your code and the output lands here.</span></div>
+    </section>
+  </div>
+</main>
+
+<!-- ================= COOKBOOK ================= -->
+<main class="view" id="view-cookbook" hidden>
+  <div class="inner gutter-x">
+    <p class="book-intro">The whole course on one shelf. Every dark code box has a <b>Try it</b> button that sends it to the practice station, so you can run it and change it.</p>
+    <div class="book" id="book">
+
+<section><h2>How Python <em>reads</em> your code</h2>
+<p>Python runs your file from top to bottom, one line at a time, like a recipe. If a line breaks, it stops there and tells you which line.</p>
+<ul><li><b>Case matters.</b> <code>print</code> works, <code>Print</code> doesn't. <code>dish</code> and <code>Dish</code> are two different variables.</li>
+<li><b>Spaces at the start of a line matter.</b> They show what belongs inside an <code>if</code>, loop or function. Use 4 spaces.</li>
+<li><b>Comments</b> start with <code>#</code>. Python skips them. Use them to leave yourself notes.</li></ul>
+<pre class="ex"># This is a comment
+print("Line one")    <span class="cm"># comments can sit at the end too</span>
+print("Line two")</pre></section>
+
+<section><h2><em>Strings</em> (text)</h2>
+<p>Text goes in quotes, single or double. Python calls it a string.</p>
+<pre class="ex">dish = "fish pie"
+print(dish.upper())          <span class="cm"># FISH PIE</span>
+print(dish.title())          <span class="cm"># Fish Pie</span>
+print(len(dish))             <span class="cm"># 8 characters</span>
+print(dish[0])               <span class="cm"># f, the first character</span>
+print(dish.replace("fish", "cottage"))
+print("pie" in dish)         <span class="cm"># True</span>
+print("  messy  ".strip())   <span class="cm"># tidies the spaces</span>
+print("Ha" * 3)              <span class="cm"># HaHaHa</span></pre>
+<p>Need a quote mark inside text? Use the other kind outside: <code>"86'd"</code>.</p></section>
+
+<section><h2>f-strings</h2>
+<p>Put <code>f</code> before the quote and anything in <code>{ }</code> gets filled in. You can even do maths inside.</p>
+<pre class="ex">table = 7
+covers = 4
+print(f"Table {table}, {covers} covers")
+print(f"That's {covers * 2} bread rolls")
+price = 12.5
+print(f"£{price:.2f}")       <span class="cm"># £12.50, two decimal places</span></pre></section>
+
+<section><h2>Numbers and <em>maths</em></h2>
+<div class="tbl"><table class="ops"><tr><th>Symbol</th><th>Does</th><th>Example</th></tr>
+<tr><td><code>+</code></td><td>add</td><td><code>3 + 2</code> → 5</td></tr>
+<tr><td><code>-</code></td><td>take away</td><td><code>3 - 2</code> → 1</td></tr>
+<tr><td><code>*</code></td><td>times</td><td><code>3 * 2</code> → 6</td></tr>
+<tr><td><code>/</code></td><td>divide (always a decimal)</td><td><code>7 / 2</code> → 3.5</td></tr>
+<tr><td><code>//</code></td><td>divide, drop the remainder</td><td><code>7 // 2</code> → 3</td></tr>
+<tr><td><code>%</code></td><td>just the remainder</td><td><code>7 % 2</code> → 1</td></tr>
+<tr><td><code>**</code></td><td>to the power of</td><td><code>2 ** 3</code> → 8</td></tr></table></div>
+<p>Whole numbers are <b>int</b>, decimals are <b>float</b>. Brackets go first, just like school maths.</p>
+<pre class="ex">print(round(3.14159, 2))   <span class="cm"># 3.14</span>
+print(abs(-5))             <span class="cm"># 5</span>
+print(max(4, 9, 2), min(4, 9, 2))</pre></section>
+
+<section><h2><em>Variables</em></h2>
+<p>A labelled tub. <code>=</code> means "put this in", not "equals".</p>
+<ul><li>Letters, numbers and underscores only. No spaces: write <code>main_course</code>.</li>
+<li>Can't start with a number: <code>2nd_dish</code> breaks.</li>
+<li>Give them names that say what's inside. <code>covers</code> beats <code>x</code>.</li></ul>
+<pre class="ex">stock = 10
+stock = stock - 3     <span class="cm"># now 7</span>
+stock -= 2            <span class="cm"># shortcut, now 5</span>
+stock += 10           <span class="cm"># now 15</span>
+print(stock)</pre></section>
+
+<section><h2>input() and <em>converting</em></h2>
+<p><code>input()</code> always gives text. Convert it before doing maths.</p>
+<div class="tbl"><table class="ops"><tr><th>Tool</th><th>Turns into</th><th>Example</th></tr>
+<tr><td><code>int()</code></td><td>whole number</td><td><code>int("5")</code> → 5</td></tr>
+<tr><td><code>float()</code></td><td>decimal</td><td><code>float("2.5")</code> → 2.5</td></tr>
+<tr><td><code>str()</code></td><td>text</td><td><code>str(7)</code> → "7"</td></tr>
+<tr><td><code>type()</code></td><td>tells you the type</td><td><code>type(5)</code> → int</td></tr></table></div>
+<pre class="ex">covers = int(input("How many covers? "))
+print(covers * 2)</pre></section>
+
+<section><h2>Comparisons and <em>logic</em></h2>
+<div class="tbl"><table class="ops"><tr><th>Write</th><th>Means</th></tr>
+<tr><td><code>==</code></td><td>is equal to (two equals signs!)</td></tr>
+<tr><td><code>!=</code></td><td>is not equal to</td></tr>
+<tr><td><code>&lt;</code> <code>&gt;</code></td><td>less than, more than</td></tr>
+<tr><td><code>&lt;=</code> <code>&gt;=</code></td><td>at most, at least</td></tr>
+<tr><td><code>and</code></td><td>both must be true</td></tr>
+<tr><td><code>or</code></td><td>at least one is true</td></tr>
+<tr><td><code>not</code></td><td>flips True and False</td></tr></table></div>
+<p>Every comparison gives back <code>True</code> or <code>False</code>. These are called <b>booleans</b>.</p>
+<pre class="ex">temp = 4
+print(temp <= 5)                  <span class="cm"># True</span>
+print(temp > 0 and temp <= 5)     <span class="cm"># True</span>
+print(not True)                   <span class="cm"># False</span></pre></section>
+
+<section><h2>if, elif, <em>else</em></h2>
+<p>Ends with a colon. The lines underneath are indented 4 spaces. Python runs the first branch that's true, then skips the rest.</p>
+<pre class="ex">temp = 58
+if temp < 50:
+    print("Rare")
+elif temp < 60:
+    print("Medium")
+else:
+    print("Well done")
+print("Rest the steak")   <span class="cm"># not indented, always runs</span></pre></section>
+
+<section><h2><em>Lists</em></h2>
+<p>An ordered row of things in square brackets. Positions start at 0. Negative numbers count from the end.</p>
+<pre class="ex">prep = ["onions", "carrots", "celery"]
+print(prep[0], prep[-1])     <span class="cm"># onions celery</span>
+prep.append("garlic")        <span class="cm"># add to the end</span>
+prep.insert(0, "stock")      <span class="cm"># add at position 0</span>
+prep.remove("celery")        <span class="cm"># take out by name</span>
+last = prep.pop()            <span class="cm"># take out the last one</span>
+prep.sort()                  <span class="cm"># A to Z</span>
+print(prep, len(prep))
+print(prep[0:2])             <span class="cm"># slice: positions 0 and 1</span>
+print("onions" in prep)</pre></section>
+
+<section><h2>for <em>loops</em> and range()</h2>
+<p>Repeat steps for each item. <code>range(start, stop, step)</code> makes numbers and stops <b>before</b> the stop.</p>
+<pre class="ex">for dish in ["soup", "pie"]:
+    print(f"Plate the {dish}")
+
+for n in range(1, 4):        <span class="cm"># 1, 2, 3</span>
+    print(n)
+
+for n in range(10, 0, -3):   <span class="cm"># 10, 7, 4, 1</span>
+    print(n)
+
+for i, dish in enumerate(["soup", "pie"]):
+    print(i, dish)           <span class="cm"># numbers each item</span></pre></section>
+
+<section><h2>while <em>loops</em></h2>
+<p>Keeps going while the condition is true. Something inside must change, or it never stops. <code>break</code> jumps out early. <code>continue</code> skips to the next round.</p>
+<pre class="ex">stock = 0
+while stock < 10:
+    stock += 4
+    print(stock)
+
+n = 0
+while True:
+    n += 1
+    if n == 3:
+        continue     <span class="cm"># skip printing 3</span>
+    if n > 5:
+        break        <span class="cm"># stop completely</span>
+    print(n)</pre></section>
+
+<section><h2><em>Functions</em></h2>
+<p>A recipe with a name. <code>def</code> writes it, calling it runs it. Ingredients go in the brackets (parameters). <code>return</code> hands a result back.</p>
+<pre class="ex">def with_vat(price):
+    return price * 1.2
+
+def greet(name, table=1):     <span class="cm"># table has a default</span>
+    print(f"Evening {name}, table {table}")
+
+total = with_vat(10)
+print(round(total, 2))
+greet("Sam")
+greet("Alex", 5)</pre>
+<p>Variables made inside a function stay inside it. That's called <b>scope</b>.</p></section>
+
+<section><h2><em>Dictionaries</em></h2>
+<p>Keys matched to values, in curly brackets. Like a menu: dish → price.</p>
+<pre class="ex">menu = {"soup": 6, "pie": 12}
+print(menu["soup"])           <span class="cm"># 6</span>
+menu["burger"] = 14           <span class="cm"># add a new dish</span>
+menu["soup"] = 7              <span class="cm"># change a price</span>
+print(menu.get("lasagne", 0)) <span class="cm"># 0 instead of crashing</span>
+print("pie" in menu)          <span class="cm"># checks keys</span>
+for dish, price in menu.items():
+    print(f"{dish}: £{price}")</pre></section>
+
+<section><h2>Catching <em>mistakes</em>: try / except</h2>
+<p>Put risky code in <code>try</code>. If it fails, the <code>except</code> part runs instead of crashing.</p>
+<pre class="ex">answer = "four"
+try:
+    covers = int(answer)
+    print(covers * 2)
+except ValueError:
+    print("That's not a number, chef")</pre></section>
+
+<section><h2>Reading <em>error messages</em></h2>
+<p>Errors aren't failure, they're the kitchen telling you what's wrong. Read the last line first, then go to the line number.</p>
+<div class="tbl"><table class="ops"><tr><th>Error</th><th>Usually means</th></tr>
+<tr><td><code>SyntaxError</code></td><td>Typo in the shape of the code: missing bracket, quote or colon.</td></tr>
+<tr><td><code>IndentationError</code></td><td>Spaces at the start of a line are wrong.</td></tr>
+<tr><td><code>NameError</code></td><td>A name Python doesn't know. Spelling, or missing quotes on text.</td></tr>
+<tr><td><code>TypeError</code></td><td>Mixing types, like adding text to a number.</td></tr>
+<tr><td><code>ValueError</code></td><td>Right type, wrong value, like <code>int("four")</code>.</td></tr>
+<tr><td><code>IndexError</code></td><td>Asking for a list position that doesn't exist.</td></tr>
+<tr><td><code>KeyError</code></td><td>Asking a dictionary for a key it doesn't have.</td></tr>
+<tr><td><code>ZeroDivisionError</code></td><td>Dividing by zero.</td></tr></table></div></section>
+
+<section><h2>Thinking like a <em>programmer</em></h2>
+<ul><li><b>Break it down.</b> Write the steps in plain English as comments first, then turn each into code.</li>
+<li><b>Run early, run often.</b> Test after every couple of lines, not after twenty.</li>
+<li><b>Print to investigate.</b> Not sure what a variable holds? <code>print(it)</code>. Pros do this all the time.</li>
+<li><b>Read the error, then the line.</b> The line number is the first place to look, but sometimes the real mistake is the line above.</li>
+<li><b>Change one thing at a time.</b> Then you know what fixed it.</li></ul></section>
+
+<section><h2>Taking it to a <em>real terminal</em></h2>
+<p>Once you've cleared the rail, write Python on your own computer. On Linux, Python 3 is usually already installed.</p>
+<ul><li>Open a terminal and type <code>python3</code> to get an interactive prompt. Type <code>exit()</code> to leave.</li>
+<li>Save code in a file ending <code>.py</code>, like <code>kitchen.py</code>, using any text editor.</li>
+<li>Run it with <code>python3 kitchen.py</code> from the same folder.</li>
+<li>A proper editor like VS Code adds colours, autocomplete and error underlines.</li></ul></section>
+
+    </div>
+  </div>
+</main>
+
+<div class="inner gutter-x"><footer>Real Python 3, running in your browser. Progress and practice code save on this device only. A <a href="https://kralnugames.com" style="color:inherit">Kralnu Games</a> project.</footer></div>
+
+<script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
+<script>
+/* =================== TICKETS =================== */
+const SERVICES = ["Breakfast: the basics", "Lunch: decisions", "Dinner: lists and loops", "Late service: functions and dictionaries"];
+const LEVELS = [
+/* ---------- BREAKFAST ---------- */
+{ svc: 0, title: "First Call", concept: "print() and strings",
+  bark: "Right, new starter! First thing anyone says on my line is Yes, Chef! Print it!",
+  lesson: `<p>Every program talks to you through <code>print()</code>. Whatever goes inside the brackets gets shown on screen.</p>
+<p>Text has to sit inside quote marks, single or double. Python calls a piece of text a <b>string</b>.</p>
+<pre class="ex">print("Hello, kitchen")
+print('Single quotes work too')</pre>`,
+  notes: `<p>Python runs your code top to bottom, one line at a time. Each <code>print()</code> starts a new line.</p>
+<p>You can print several things at once with commas. Python puts a space between them. An empty <code>print()</code> prints a blank line.</p>
+<pre class="ex">print("Soup", "Bread", "Butter")
+print()
+print("After the gap")</pre>`,
+  mistakes: ["Forgetting the quotes: <code>print(Yes)</code> makes Python look for a variable called Yes.", "Capital P: <code>Print()</code> doesn't exist. Python is case-sensitive.", "Mismatched quotes: <code>\"Hello'</code> won't work. Open and close with the same kind."],
+  task: `<p>Head chef just called the first order. Answer properly. Print exactly:</p>`,
+  expect: "Yes, Chef!",
+  starter: `# Lines starting with # are comments. Python ignores them.\n# Write your code under here:\n`,
+  tests: [{ expected: "Yes, Chef!" }],
+  hints: ["You need print() with your words in quotes inside the brackets.", "Capitals and punctuation count. Yes, Chef! has a comma and an exclamation mark.", "The shape is print(\"...\") with the words where the dots are."] },
+
+{ svc: 0, title: "Mise en Place", concept: "Variables",
+  bark: "Mise en place! Label your tubs. Variable called dish, Tomato soup inside, then print it!",
+  lesson: `<p>A <b>variable</b> is a labelled tub on your station. Put something in it, then grab it later by name.</p>
+<pre class="ex">special = "Beef stew"
+print(special)   <span class="cm"># shows: Beef stew</span></pre>
+<p><code>print(special)</code> has no quotes. With quotes it would print the word "special" itself.</p>`,
+  notes: `<p>The <code>=</code> sign means "put this in the tub". It doesn't mean equals like in maths.</p>
+<p>You can swap what's in a tub any time. The newest value wins.</p>
+<pre class="ex">dish = "Soup"
+print(dish)
+dish = "Stew"
+print(dish)</pre>
+<p><b>Naming rules:</b> letters, numbers and underscores only. No spaces, so write <code>main_course</code>. It can't start with a number. And <code>Dish</code> and <code>dish</code> are different tubs.</p>`,
+  mistakes: ["<code>print(\"dish\")</code> prints the word dish, not what's inside.", "Spaces in names: <code>main course = ...</code> breaks. Use an underscore.", "Using a tub before you've made it gives a NameError."],
+  task: `<p>Make a variable called <code>dish</code> holding the text <code>Tomato soup</code>, then print the variable (not the text directly).</p>`,
+  expect: "Tomato soup",
+  starter: `# Make your variable, then print it\n`,
+  tests: [{ expected: "Tomato soup" }],
+  requires: [[/\bdish\s*=/, "make a variable called dish using ="], [/print\(\s*dish\s*\)/, "print the variable itself: print(dish)"]],
+  hints: ["Two lines: one to fill the tub, one to print it.", "Filling a variable looks like name = \"value\".", "If it prints the word dish, you've put quotes around dish inside print()."] },
+
+{ svc: 0, title: "Counting Covers", concept: "Numbers and maths",
+  bark: "How many covers tonight? Six tables, four seats each. Let Python work it out, not your fingers!",
+  lesson: `<p>Numbers don't need quotes. Python does maths with <code>+ - * /</code>. The star <code>*</code> means times.</p>
+<pre class="ex">trays = 3
+rolls_per_tray = 12
+print(trays * rolls_per_tray)   <span class="cm"># 36</span></pre>`,
+  notes: `<table class="ops"><tr><th>Symbol</th><th>Does</th><th>Example</th></tr>
+<tr><td><code>/</code></td><td>divide, always gives a decimal</td><td><code>10 / 4</code> → 2.5</td></tr>
+<tr><td><code>//</code></td><td>divide, drop the remainder</td><td><code>10 // 4</code> → 2</td></tr>
+<tr><td><code>%</code></td><td>the remainder only</td><td><code>10 % 4</code> → 2</td></tr>
+<tr><td><code>**</code></td><td>power</td><td><code>2 ** 3</code> → 8</td></tr></table>
+<p>Whole numbers are called <b>int</b>, decimals are <b>float</b>. Brackets get worked out first.</p>
+<pre class="ex">print(10 / 4)
+print(10 // 4)
+print(10 % 4)
+print((2 + 3) * 4)
+print("6" * 4)    <span class="cm"># text repeated, not maths!</span></pre>`,
+  mistakes: ["Quotes around numbers: <code>\"6\" * 4</code> gives 6666, not 24.", "Using <code>x</code> for times. Python only understands <code>*</code>."],
+  task: `<p>The restaurant has 6 tables with 4 seats each. Make variables <code>tables</code> and <code>seats</code>, then print the total covers by multiplying them.</p>`,
+  expect: "24", starter: ``,
+  tests: [{ expected: "24" }],
+  requires: [[/\btables\s*=/, "make a variable called tables"], [/\bseats\s*=/, "make a variable called seats"], [/\*/, "let Python do the multiplying with *"]],
+  hints: ["Make the two variables first, each on its own line.", "No quotes around numbers. tables = 6, not tables = \"6\".", "print() can do maths inside its brackets, using your two variable names."] },
+
+{ svc: 0, title: "Calling the Order", concept: "f-strings",
+  bark: "Call it properly! Eight risotto. I want to hear 8 x Risotto. Use an f-string!",
+  lesson: `<p>To mix variables into text, put an <code>f</code> before the opening quote and wrap the variables in curly brackets.</p>
+<pre class="ex">table = 7
+starter = "Pâté"
+print(f"Table {table}: {starter}")   <span class="cm"># Table 7: Pâté</span></pre>`,
+  notes: `<p>You can do maths right inside the curly brackets.</p>
+<pre class="ex">covers = 8
+print(f"That's {covers * 2} rolls")
+price = 4.5
+print(f"£{price:.2f}")   <span class="cm"># :.2f means 2 decimal places</span></pre>
+<p>The older way joins strings with <code>+</code>, but every piece must be text, so numbers need <code>str()</code>. f-strings are tidier.</p>
+<pre class="ex">print("Table " + str(7))</pre>`,
+  mistakes: ["Forgetting the <code>f</code>: Python prints the curly brackets literally.", "Leaving out the closing quote or bracket at the end."],
+  task: `<p><code>dish</code> and <code>covers</code> are already set up. Use one f-string to print:</p>`,
+  expect: "8 x Risotto",
+  starter: `dish = "Risotto"\ncovers = 8\n# Print it with an f-string\n`,
+  tests: [{ expected: "8 x Risotto" }],
+  requires: [[/\bf["']/, "use an f-string: f\"...\""]],
+  hints: ["Start with print(f\" and close both the quote and the bracket.", "Each variable goes in { } inside the text.", "The little x is just a letter typed in the text, with a space either side."] },
+
+{ svc: 0, title: "Order In", concept: "input()",
+  bark: "Orders are coming in! Read the order and call it. Order up, then the dish!",
+  lesson: `<p><code>input()</code> waits for someone to type, then hands you what they typed as a string. Save it in a variable to use it.</p>
+<pre class="ex">name = input()
+print(f"Evening, {name}")</pre>
+<p>In this game, the checker does the typing. It tries more than one order, so don't hardcode the answer.</p>`,
+  notes: `<p>You can give <code>input()</code> a prompt, a question shown before the answer. Prompts don't count towards the checked output here.</p>
+<pre class="ex">name = input("What's your name? ")
+print(f"Evening, {name}")</pre>
+<p>In a real terminal, the program pauses and waits for the keyboard. In the practice station, you type inputs into the Inputs box, one per line.</p>`,
+  mistakes: ["Calling <code>input()</code> but not storing it. The answer gets thrown away.", "Printing a fixed dish name. The checker will send different orders."],
+  task: `<p>Read the order with <code>input()</code> and call it to the pass. If the order is <code>Fish and chips</code>, print:</p>`,
+  expect: "Order up: Fish and chips", starter: ``,
+  tests: [{ inputs: ["Fish and chips"], expected: "Order up: Fish and chips" }, { inputs: ["Scampi"], expected: "Order up: Scampi" }],
+  requires: [[/input\(/, "use input() to read the order"]],
+  hints: ["Line 1: store input() in a variable. Line 2: print.", "The f-string trick from the last ticket works here.", "Keep the colon and the space after Order up."] },
+
+{ svc: 0, title: "Bread Rolls", concept: "Converting types with int()",
+  bark: "Two rolls a head! Read the covers, tell me how many rolls. And make it a number, not text!",
+  lesson: `<p>Whatever <code>input()</code> gives you is always text, even "5". Text can't do maths. Wrap it in <code>int()</code> to turn it into a whole number.</p>
+<pre class="ex">trays = int(input())
+print(trays + 1)</pre>`,
+  notes: `<table class="ops"><tr><th>Tool</th><th>Turns into</th></tr>
+<tr><td><code>int()</code></td><td>whole number</td></tr><tr><td><code>float()</code></td><td>decimal</td></tr>
+<tr><td><code>str()</code></td><td>text</td></tr><tr><td><code>type()</code></td><td>tells you what something is</td></tr></table>
+<pre class="ex">x = "5"
+print(type(x))
+n = int(x)
+print(type(n), n * 2)
+print(float("2.5") * 2)</pre>`,
+  mistakes: ["Forgetting <code>int()</code>: <code>\"5\" * 2</code> gives 55.", "<code>int(\"2.5\")</code> fails. Use <code>float()</code> for decimals."],
+  task: `<p>Read the number of covers. Every guest gets 2 bread rolls. Print how many rolls to bake. For 5 covers:</p>`,
+  expect: "10", starter: ``,
+  tests: [{ inputs: ["5"], expected: "10" }, { inputs: ["12"], expected: "24" }, { inputs: ["1"], expected: "2" }],
+  requires: [[/int\(/, "turn the input into a number with int()"]],
+  hints: ["int() goes around input(), like a lid on a tub.", "If you see 55 instead of 10, Python is repeating the text. You forgot int().", "Then multiply your variable by 2 inside print()."] },
+
+/* ---------- LUNCH ---------- */
+{ svc: 1, title: "Shout It Back", concept: "String methods",
+  bark: "I can't hear you! Read the dish and shout it back in capitals with an exclamation mark!",
+  lesson: `<p>Strings come with built-in tools called <b>methods</b>. You use them with a dot after the string.</p>
+<pre class="ex">dish = "fish pie"
+print(dish.upper())    <span class="cm"># FISH PIE</span>
+print(dish.title())    <span class="cm"># Fish Pie</span>
+print(len(dish))       <span class="cm"># 8 characters</span></pre>`,
+  notes: `<p>Methods hand back a <b>new</b> string. The original stays the same unless you save over it: <code>dish = dish.upper()</code>.</p>
+<table class="ops"><tr><th>Method</th><th>Does</th></tr>
+<tr><td><code>.lower()</code></td><td>all lowercase</td></tr><tr><td><code>.strip()</code></td><td>removes spaces at both ends</td></tr>
+<tr><td><code>.replace(a, b)</code></td><td>swaps a for b</td></tr><tr><td><code>.startswith(x)</code></td><td>True or False</td></tr></table>
+<p>You can chain them: <code>input().strip().lower()</code> tidies up whatever someone types.</p>
+<pre class="ex">messy = "  CHIPS  "
+print(messy.strip().lower())
+print("chips"[0])   <span class="cm"># strings have positions too</span></pre>`,
+  mistakes: ["Forgetting the brackets: <code>dish.upper</code> without <code>()</code> doesn't run it.", "Expecting the original to change without saving it back."],
+  task: `<p>Read a dish with <code>input()</code> and print it in capitals with <code>!</code> on the end. For <code>chips</code>:</p>`,
+  expect: "CHIPS!", starter: ``,
+  tests: [{ inputs: ["chips"], expected: "CHIPS!" }, { inputs: ["fish pie"], expected: "FISH PIE!" }],
+  requires: [[/\.upper\(\)/, "use .upper()"]],
+  hints: ["Store the input, then use .upper() on it.", "An f-string can hold a method call: f\"{dish.upper()}!\"", "No space between the dish and the !."] },
+
+{ svc: 1, title: "Fridge Check", concept: "if / else and booleans",
+  bark: "Fridge check! Five degrees or under is safe. Any warmer, I want to know about it!",
+  lesson: `<p><code>if</code> lets your code make a decision. End the line with a colon, then indent the lines below by 4 spaces. The indent is how Python knows what belongs to the if.</p>
+<pre class="ex">stock = int(input())
+if stock > 0:
+    print("Available")
+else:
+    print("86 it")</pre>`,
+  notes: `<p>Every comparison gives back <code>True</code> or <code>False</code>. These are called <b>booleans</b>.</p>
+<table class="ops"><tr><th>Write</th><th>Means</th></tr>
+<tr><td><code>==</code></td><td>equal to</td></tr><tr><td><code>!=</code></td><td>not equal to</td></tr>
+<tr><td><code>&lt;</code> <code>&gt;</code></td><td>less, more</td></tr><tr><td><code>&lt;=</code> <code>&gt;=</code></td><td>at most, at least</td></tr></table>
+<pre class="ex">temp = 4
+print(temp <= 5)
+if temp <= 5:
+    print("Safe")
+print("Check done")   <span class="cm"># runs either way</span></pre>
+<p>You can have an <code>if</code> without an <code>else</code>. The else is optional.</p>`,
+  mistakes: ["Using <code>=</code> to compare. Comparing needs <code>==</code>.", "Missing the colon at the end of the if or else line.", "Comparing text to a number. Remember <code>int()</code> on the input."],
+  task: `<p>Read the fridge temperature as a number. If it's 5 or below, print <code>Safe</code>. Otherwise print <code>Too warm</code>.</p>`,
+  expect: "Safe        (for 3)\nToo warm    (for 8)", starter: ``,
+  tests: [{ inputs: ["3"], expected: "Safe" }, { inputs: ["5"], expected: "Safe" }, { inputs: ["8"], expected: "Too warm" }],
+  requires: [[/\bif\b/, "use an if"], [/\belse\s*:/, "use an else:"]],
+  hints: ["Read with int(input()) like before.", "5 counts as safe, so you need 'at most', not 'less than'.", "Check the colon at the end of the if and else lines, and the 4-space indent under them."] },
+
+{ svc: 1, title: "Steak Station", concept: "elif",
+  bark: "Probe that steak! Under fifty, rare. Under sixty, medium. Anything else, well done!",
+  lesson: `<p>For more than two choices, add <code>elif</code>, short for "else if". Python checks from the top and runs only the <b>first</b> one that's true.</p>
+<pre class="ex">size = int(input())
+if size < 200:
+    print("Small")
+elif size < 300:
+    print("Regular")
+else:
+    print("Large")</pre>`,
+  notes: `<p>You can have as many <code>elif</code>s as you like. Order matters: put the narrowest check first.</p>
+<p>If you checked <code>size < 300</code> first, a 150g portion would say "Regular", because 150 is also less than 300 and Python stops at the first true one.</p>`,
+  mistakes: ["Checks in the wrong order, so the first branch catches everything.", "Using several separate <code>if</code>s instead of <code>elif</code>, so more than one prints."],
+  task: `<p>Read the steak's core temperature. Below 50 print <code>Rare</code>, below 60 print <code>Medium</code>, anything else print <code>Well done</code>.</p>`,
+  expect: "Rare (45)   Medium (55)   Well done (60)", starter: ``,
+  tests: [{ inputs: ["45"], expected: "Rare" }, { inputs: ["55"], expected: "Medium" }, { inputs: ["60"], expected: "Well done" }, { inputs: ["72"], expected: "Well done" }],
+  requires: [[/\belif\b/, "use elif for the middle option"]],
+  hints: ["Order matters. Check the lowest temperature first.", "60 itself should be Well done, so the middle check is 'less than 60'.", "Shape: if ...: / elif ...: / else: with prints indented under each."] },
+
+{ svc: 1, title: "Hot Holding", concept: "and, or, not",
+  bark: "Hot holding! Sixty-three degrees or more AND held ninety minutes or less, it goes out. Otherwise, bin it!",
+  lesson: `<p>Join conditions together:</p>
+<ul><li><code>and</code>: both sides must be true</li><li><code>or</code>: at least one side is true</li><li><code>not</code>: flips True to False</li></ul>
+<pre class="ex">vegan = True
+nuts = False
+if vegan and not nuts:
+    print("Safe for table 4")</pre>`,
+  notes: `<p>Each side of <code>and</code> must be a full comparison. <code>temp >= 63 and <= 90</code> doesn't work. You need <code>temp >= 63 and minutes <= 90</code>.</p>
+<pre class="ex">print(True and False)
+print(True or False)
+print(5 > 3 or 2 > 9)
+print(not 5 > 3)</pre>
+<p>This task reads <b>two</b> inputs. Each <code>input()</code> call takes the next one.</p>`,
+  mistakes: ["Writing <code>and</code> with half a comparison on one side.", "Mixing up the two inputs: the first is the temperature, the second is the minutes."],
+  task: `<p>Read the temperature, then the minutes it's been held (two inputs, both numbers). If it's at least 63 <b>and</b> held 90 minutes or less, print <code>Serve</code>. Otherwise print <code>Bin it</code>.</p>`,
+  expect: "Serve    (70, 30)\nBin it   (60, 30)\nBin it   (70, 120)", starter: ``,
+  tests: [{ inputs: ["70", "30"], expected: "Serve" }, { inputs: ["60", "30"], expected: "Bin it" }, { inputs: ["70", "120"], expected: "Bin it" }, { inputs: ["63", "90"], expected: "Serve" }],
+  requires: [[/\band\b/, "join the two checks with and"]],
+  hints: ["Two lines of int(input()), one for temp, one for minutes.", "At least means >=, at most means <=.", "if temp >= 63 and ... : then the rest of the shape you know."] },
+
+{ svc: 1, title: "On the Menu?", concept: "Checking with in",
+  bark: "Someone's ordered something. Is it even on my menu? If it is, coming up. If not, it's 86'd!",
+  lesson: `<p><code>in</code> checks whether something is inside something else. It works on lists and on strings.</p>
+<pre class="ex">print("nut" in "walnut")              <span class="cm"># True</span>
+print("pie" in ["soup", "pie"])       <span class="cm"># True</span>
+print("tart" not in ["soup", "pie"])  <span class="cm"># True</span></pre>`,
+  notes: `<p>"86" is kitchen slang for "we've run out". To get an apostrophe inside text, use double quotes on the outside: <code>"86'd, chef"</code>.</p>
+<p><code>in</code> is case-sensitive. <code>"Pie" in ["pie"]</code> is False. Using <code>.lower()</code> on the input first makes it more forgiving.</p>`,
+  mistakes: ["Single quotes around text that contains an apostrophe. The apostrophe ends the string early.", "Checking against one dish with <code>==</code> instead of the whole list with <code>in</code>."],
+  task: `<p>Read a dish. If it's in <code>menu</code>, print <code>Coming up</code>. If not, print:</p>`,
+  expect: "86'd, chef",
+  starter: `menu = ["soup", "burger", "pie"]\n`,
+  tests: [{ inputs: ["burger"], expected: "Coming up" }, { inputs: ["lasagne"], expected: "86'd, chef" }, { inputs: ["pie"], expected: "Coming up" }],
+  requires: [[/\bin\s+menu\b/, "check with in menu"]],
+  hints: ["if dish in menu: then indented print.", "Use double quotes around 86'd, chef because of the apostrophe.", "Don't forget the else: for dishes not on the menu."] },
+
+/* ---------- DINNER ---------- */
+{ svc: 2, title: "The Prep List", concept: "Lists",
+  bark: "Prep list! What's the first job, and how many jobs have we got?",
+  lesson: `<p>A <b>list</b> holds several things in order, inside square brackets. Get one by its position. Python counts from <b>0</b>, so the first item is <code>[0]</code>.</p>
+<pre class="ex">herbs = ["basil", "thyme", "sage"]
+print(herbs[1])     <span class="cm"># thyme</span>
+print(len(herbs))   <span class="cm"># 3</span></pre>`,
+  notes: `<p>Negative positions count from the end: <code>[-1]</code> is the last item.</p>
+<p><b>Slicing</b> grabs a run of items: <code>herbs[0:2]</code> gives positions 0 and 1 (it stops before 2).</p>
+<pre class="ex">herbs = ["basil", "thyme", "sage", "mint"]
+print(herbs[-1])
+print(herbs[1:3])
+print(herbs[:2])</pre>`,
+  mistakes: ["Using <code>[1]</code> for the first item. It's <code>[0]</code>.", "Asking for a position past the end gives an IndexError."],
+  task: `<p>Print the first item on the list, then on the next line print how many items there are.</p>`,
+  expect: "onions\n3",
+  starter: `prep = ["onions", "carrots", "celery"]\n`,
+  tests: [{ expected: "onions\n3" }],
+  requires: [[/prep\s*\[\s*0\s*\]/, "get the first item with prep[0]"], [/len\(/, "use len() to count"]],
+  hints: ["Two print() lines.", "First item is position 0, not 1.", "len() goes around the list's name to count it."] },
+
+{ svc: 2, title: "One More Job", concept: "Changing lists",
+  bark: "Sous wants one more job on the list. Add it, then tell me how long the list is and what's last!",
+  lesson: `<p>Lists can change. <code>.append()</code> adds an item to the end.</p>
+<pre class="ex">jobs = ["peel"]
+jobs.append("chop")
+print(jobs)       <span class="cm"># ['peel', 'chop']</span></pre>`,
+  notes: `<table class="ops"><tr><th>Method</th><th>Does</th></tr>
+<tr><td><code>.append(x)</code></td><td>add to the end</td></tr><tr><td><code>.insert(0, x)</code></td><td>add at a position</td></tr>
+<tr><td><code>.remove(x)</code></td><td>take out by name</td></tr><tr><td><code>.pop()</code></td><td>take out the last one and hand it back</td></tr>
+<tr><td><code>.sort()</code></td><td>put in order</td></tr></table>
+<pre class="ex">jobs = ["peel", "chop", "dice"]
+jobs.remove("chop")
+done = jobs.pop()
+print(done, jobs)</pre>`,
+  mistakes: ["Writing <code>prep = prep.append(x)</code>. append changes the list itself and returns nothing.", "Using <code>[len(prep)]</code> for the last item. That's one past the end. Use <code>[-1]</code>."],
+  task: `<p>Read one more job with <code>input()</code>, add it to <code>prep</code>, then print the length of the list and then its last item. For <code>garlic</code>:</p>`,
+  expect: "3\ngarlic",
+  starter: `prep = ["onions", "carrots"]\n`,
+  tests: [{ inputs: ["garlic"], expected: "3\ngarlic" }, { inputs: ["leeks"], expected: "3\nleeks" }],
+  requires: [[/\.append\(/, "add it with .append()"], [/\[\s*-1\s*\]/, "get the last item with [-1]"]],
+  hints: ["Store the input, then prep.append(your_variable).", "len(prep) for the count.", "prep[-1] for the last item."] },
+
+{ svc: 2, title: "Working the List", concept: "for loops",
+  bark: "Read the prep list out to the brigade. Every job, a dash in front. Use a loop!",
+  lesson: `<p>A <code>for</code> loop runs the same steps for each item in a list. The name after <code>for</code> holds the current item each time round.</p>
+<pre class="ex">for herb in ["basil", "thyme"]:
+    print(f"Pick {herb}")</pre>`,
+  notes: `<p>Everything indented under the <code>for</code> line runs once per item. The first unindented line after it runs once, after the loop finishes.</p>
+<p><code>enumerate()</code> gives you a counter alongside each item.</p>
+<pre class="ex">for i, job in enumerate(["peel", "chop"]):
+    print(i + 1, job)
+print("All done")</pre>
+<p>Loops work on strings too, one letter at a time.</p>`,
+  mistakes: ["Forgetting the colon on the for line.", "Printing the whole list inside the loop instead of the loop variable."],
+  task: `<p>Print every item on the prep list with a dash and a space in front:</p>`,
+  expect: "- onions\n- carrots\n- celery\n- garlic",
+  starter: `prep = ["onions", "carrots", "celery", "garlic"]\n`,
+  tests: [{ expected: "- onions\n- carrots\n- celery\n- garlic" }],
+  requires: [[/\bfor\b.+\bin\b/, "use a for ... in ... loop, not a print for each one"]],
+  hints: ["for item in prep: then an indented print.", "You can call the loop variable anything: item, veg, job.", "An f-string makes the dash easy: f\"- {item}\"."] },
+
+{ svc: 2, title: "Oven Timer", concept: "range()",
+  bark: "Countdown on the oven! Five down to one, then I want to hear the ding!",
+  lesson: `<p><code>range()</code> makes a run of numbers for a loop. <code>range(start, stop, step)</code> stops <b>before</b> the stop number.</p>
+<pre class="ex">for n in range(1, 4):
+    print(n)          <span class="cm"># 1, 2, 3</span>
+for n in range(10, 0, -5):
+    print(n)          <span class="cm"># 10, 5</span></pre>`,
+  notes: `<p><code>range(5)</code> on its own means 0, 1, 2, 3, 4. Five numbers, starting at 0.</p>
+<p>A step of <code>-1</code> counts down. A step of 2 skips every other number.</p>
+<pre class="ex">for n in range(1, 13):
+    print(f"{n} x 7 = {n * 7}")</pre>`,
+  mistakes: ["Expecting the stop number to be included. <code>range(1, 5)</code> ends at 4.", "Indenting the line that should run after the loop, so it runs every time."],
+  task: `<p>Count down from 5 to 1, one number per line, then print <code>Ding!</code> once the loop is done.</p>`,
+  expect: "5\n4\n3\n2\n1\nDing!", starter: ``,
+  tests: [{ expected: "5\n4\n3\n2\n1\nDing!" }],
+  requires: [[/range\(/, "use range() in a for loop"]],
+  hints: ["You want range(start, stop, -1).", "The stop is never included, so to reach 1 you stop at 0.", "Ding! goes after the loop. Don't indent it."] },
+
+{ svc: 2, title: "Restock", concept: "while loops",
+  bark: "We're low! Stock's at two. Keep adding four portions till we're at twenty, and call each count!",
+  lesson: `<p>A <code>while</code> loop keeps going as long as its condition is true. Something inside must change, or it never stops.</p>
+<pre class="ex">eggs = 0
+while eggs < 12:
+    eggs = eggs + 6
+    print(eggs)       <span class="cm"># 6, 12</span></pre>
+<p><code>eggs += 6</code> is a shortcut for <code>eggs = eggs + 6</code>.</p>`,
+  notes: `<p>Use <code>for</code> when you know how many times. Use <code>while</code> when you keep going until something happens.</p>
+<p><code>break</code> jumps out of a loop early. <code>continue</code> skips to the next round.</p>
+<pre class="ex">n = 0
+while True:
+    n += 1
+    if n > 4:
+        break
+    print(n)</pre>`,
+  mistakes: ["Nothing changes inside the loop, so it runs forever. The checker stops it after 3 seconds.", "Printing before adding, so you see the old number."],
+  task: `<p>Stock starts at 2 portions. While stock is below 20, add 4 portions and print the new stock.</p>`,
+  expect: "6\n10\n14\n18\n22",
+  starter: `stock = 2\n`,
+  tests: [{ expected: "6\n10\n14\n18\n22" }],
+  requires: [[/\bwhile\b/, "use a while loop"]],
+  hints: ["while stock < 20: then indented lines underneath.", "Add first, then print. Both indented.", "If it runs forever, stock isn't changing inside the loop."] },
+
+{ svc: 2, title: "Head Count", concept: "Running totals",
+  bark: "How many covers across all the tables? Add them up with a loop. No shortcuts!",
+  lesson: `<p>A <b>running total</b> starts at 0 and grows each time round a loop. It's one of the most-used patterns in programming.</p>
+<pre class="ex">total = 0
+for n in [3, 4, 5]:
+    total += n
+print(total)   <span class="cm"># 12</span></pre>`,
+  notes: `<p>The same pattern counts things: start at 0, add 1 each time something matches.</p>
+<p>Python has shortcuts too: <code>sum()</code>, <code>max()</code> and <code>min()</code>. Learn the loop first, because you'll need it when the job's more complicated than adding.</p>
+<pre class="ex">tables = [4, 2, 6, 3]
+print(sum(tables), max(tables), min(tables))</pre>`,
+  mistakes: ["Setting <code>total = 0</code> inside the loop, so it resets every time.", "Indenting the print, so it prints every step instead of once at the end."],
+  task: `<p>Add up the covers on every table using a loop and <code>+=</code>, then print the total once.</p>`,
+  expect: "15",
+  starter: `tables = [4, 2, 6, 3]\n`,
+  tests: [{ expected: "15" }],
+  requires: [[/\bfor\b/, "use a for loop"], [/\+=/, "add to the total with +="]],
+  hints: ["total = 0 goes before the loop.", "Inside the loop: total += the loop variable.", "The print goes after the loop, not indented."] },
+
+{ svc: 2, title: "Big Ticket Items", concept: "Loops with decisions",
+  bark: "Owner wants to know. Which dishes are over a tenner? Just those, nothing else!",
+  lesson: `<p>Put an <code>if</code> inside a loop to pick out only the items you want. This is called <b>filtering</b>.</p>
+<pre class="ex">for t in [2, 8, 5]:
+    if t > 4:
+        print(t)      <span class="cm"># 8, 5</span></pre>`,
+  notes: `<p>Notice the double indent: the <code>if</code> is inside the loop (4 spaces), and the print is inside the if (8 spaces).</p>
+<p>You can build a new list from the ones you keep:</p>
+<pre class="ex">keep = []
+for t in [2, 8, 5]:
+    if t > 4:
+        keep.append(t)
+print(keep)</pre>`,
+  mistakes: ["The print only indented once, so it runs for every item.", "Using <code>>=</code> when you mean over: 10 itself isn't over a tenner."],
+  task: `<p>Print only the prices that are more than 10, one per line.</p>`,
+  expect: "14\n12\n18",
+  starter: `prices = [6, 14, 12, 9, 18]\n`,
+  tests: [{ expected: "14\n12\n18" }],
+  requires: [[/\bfor\b/, "loop over the prices"], [/\bif\b/, "use an if inside the loop"]],
+  hints: ["for price in prices:", "Inside it, if price > 10:", "The print sits 8 spaces in, under the if."] },
+
+/* ---------- LATE SERVICE ---------- */
+{ svc: 3, title: "Signature Move", concept: "Functions",
+  bark: "Every chef has a signature move. Write me a function called plate, then plate the duck and the salmon!",
+  lesson: `<p>A <b>function</b> is a recipe with a name. Write it once with <code>def</code>, then use it whenever you like. The things in the brackets are the ingredients it needs, called <b>parameters</b>.</p>
+<pre class="ex">def greet(name):
+    print(f"Evening, {name}")
+
+greet("table six")
+greet("the bar")</pre>
+<p>Defining it does nothing on its own. It only runs when you call it.</p>`,
+  notes: `<p>Functions stop you writing the same lines again and again. If the recipe changes, you fix it in one place.</p>
+<p>Functions can take more than one ingredient, and give one a default value:</p>
+<pre class="ex">def call(dish, table=1):
+    print(f"{dish} for table {table}")
+
+call("Soup")
+call("Pie", 4)</pre>`,
+  mistakes: ["Defining it but never calling it, so nothing prints.", "Indenting the calls, which puts them inside the function."],
+  task: `<p>Write a function <code>plate(dish)</code> that prints <code>Plating</code> and the dish. Then call it for <code>Duck</code> and <code>Salmon</code>.</p>`,
+  expect: "Plating Duck\nPlating Salmon", starter: ``,
+  tests: [{ expected: "Plating Duck\nPlating Salmon" }],
+  requires: [[/def\s+plate\s*\(/, "define a function called plate with def"], [/plate\(\s*["']Duck["']\s*\)/, "call plate(\"Duck\")"]],
+  hints: ["def plate(dish): then an indented print.", "The calls go below, not indented.", "If nothing prints, you've defined it but not called it."] },
+
+{ svc: 3, title: "Portion Control", concept: "return",
+  bark: "How many portions from this batch? Write a function that works it out and hands me the number!",
+  lesson: `<p><code>return</code> hands a value back from a function instead of printing it. Then you can store it, do maths with it, or print it.</p>
+<pre class="ex">def double(n):
+    return n * 2
+
+big = double(21)
+print(big)   <span class="cm"># 42</span></pre>`,
+  notes: `<p>Printing shows something on screen. Returning gives it back to your code to use. A function that only prints can't be used in a calculation.</p>
+<p><code>return</code> also ends the function straight away. Anything after it inside the function won't run.</p>
+<p>Variables made inside a function only exist inside it. That's called <b>scope</b>.</p>`,
+  mistakes: ["Printing inside the function instead of returning.", "Using <code>/</code> instead of <code>//</code>, giving 6.666 instead of 6."],
+  task: `<p>Write <code>portions(total, size)</code> that returns how many whole portions you get. Then print <code>portions(1000, 150)</code> and <code>portions(2400, 200)</code>. Chef will also taste-test it with his own numbers.</p>`,
+  expect: "6\n12",
+  starter: `def portions(total, size):\n    # your code here\n\n`,
+  tests: [{ expected: "6\n12" }, { append: "\nprint(portions(900, 100))", expected: "6\n12\n9", hidden: true }],
+  requires: [[/\breturn\b/, "use return inside your function"]],
+  hints: ["Inside the function: return total // size.", "Use // not /.", "The print() calls go outside the function, with no indent."] },
+
+{ svc: 3, title: "The Menu Board", concept: "Dictionaries",
+  bark: "Customer wants a price. Look it up on the board and tell them!",
+  lesson: `<p>A <b>dictionary</b> matches keys to values, like a menu matches dishes to prices. Curly brackets, <code>key: value</code> pairs.</p>
+<pre class="ex">allergens = {"pesto": "nuts", "aioli": "egg"}
+print(allergens["pesto"])   <span class="cm"># nuts</span></pre>`,
+  notes: `<p>Lists find things by position. Dictionaries find things by name, which is quicker and clearer when you have labels.</p>
+<p>Asking for a key that isn't there crashes with a KeyError. <code>.get()</code> gives a fallback instead.</p>
+<pre class="ex">menu = {"soup": 6}
+print(menu.get("tart", "not on tonight"))
+print("soup" in menu)</pre>`,
+  mistakes: ["Using round brackets: <code>menu(\"soup\")</code>. It's square: <code>menu[\"soup\"]</code>.", "Putting quotes round a variable: <code>menu[\"dish\"]</code> looks for a dish literally called dish."],
+  task: `<p>Read a dish name with <code>input()</code>, look up its price in <code>menu</code>, and print it like this (for burger):</p>`,
+  expect: "burger: £14",
+  starter: `menu = {"soup": 6, "burger": 14, "pie": 12}\n`,
+  tests: [{ inputs: ["burger"], expected: "burger: £14" }, { inputs: ["pie"], expected: "pie: £12" }, { inputs: ["soup"], expected: "soup: £6" }],
+  requires: [[/menu\s*\[/, "look up the price with menu[...]"]],
+  hints: ["Store the input in a variable, say dish.", "menu[dish] gives you the price. No quotes around dish.", "An f-string with two { } parts does the rest. The £ is just typed in."] },
+
+{ svc: 3, title: "New Specials", concept: "Changing dictionaries",
+  bark: "Soup's going up a quid and pie's on tonight at twelve! Update the board and read it all out!",
+  lesson: `<p>Add or change a dictionary entry the same way: put a value in for a key.</p>
+<pre class="ex">menu = {"soup": 6}
+menu["tart"] = 8     <span class="cm"># new key, gets added</span>
+menu["soup"] = 7     <span class="cm"># old key, gets changed</span></pre>
+<p>Loop through every pair with <code>.items()</code>:</p>
+<pre class="ex">for dish, price in menu.items():
+    print(dish, price)</pre>`,
+  notes: `<p><code>.keys()</code> gives just the keys, <code>.values()</code> just the values. <code>del menu["tart"]</code> removes one.</p>
+<pre class="ex">menu = {"soup": 6, "tart": 8}
+print(list(menu.keys()))
+print(sum(menu.values()))
+del menu["tart"]
+print(menu)</pre>`,
+  mistakes: ["Forgetting that the loop over <code>.items()</code> needs two names: <code>for dish, price in ...</code>"],
+  task: `<p>Change soup to 7, add pie at 12, then loop through the menu printing each line like <code>soup: £7</code>. Any order is fine.</p>`,
+  expect: "soup: £7\nburger: £14\npie: £12",
+  starter: `menu = {"soup": 6, "burger": 14}\n`,
+  tests: [{ expected: "soup: £7\nburger: £14\npie: £12", anyOrder: true }],
+  requires: [[/\.items\(\)/, "loop with .items()"]],
+  hints: ["Two lines to update: menu[\"soup\"] = ... and menu[\"pie\"] = ...", "for dish, price in menu.items():", "Inside: an f-string with dish, a colon, a space, £ and the price."] },
+
+{ svc: 3, title: "Bad Orders", concept: "try / except",
+  bark: "Front of house keeps writing numbers as words! Don't let it crash my kitchen. Catch it!",
+  lesson: `<p>Some code can fail, like <code>int("four")</code>. Put it in a <code>try</code> block, and if it fails, the <code>except</code> block runs instead of crashing.</p>
+<pre class="ex">try:
+    n = int("abc")
+    print(n)
+except ValueError:
+    print("Not a number")</pre>`,
+  notes: `<p>Naming the error, like <code>except ValueError:</code>, means you only catch the problem you expected. A bare <code>except:</code> catches everything, which can hide real bugs.</p>
+<p>This is how real programs stay standing when people type the wrong thing.</p>`,
+  mistakes: ["Putting the risky line outside the try.", "Forgetting the colons after try and except."],
+  task: `<p>Read the covers. If it's a number, print how many bread rolls (2 each). If it isn't, print:</p>`,
+  expect: "That's not a number, chef", starter: ``,
+  tests: [{ inputs: ["4"], expected: "8" }, { inputs: ["four"], expected: "That's not a number, chef" }, { inputs: ["10"], expected: "20" }],
+  requires: [[/\btry\s*:/, "use try:"], [/\bexcept\b/, "use except"]],
+  hints: ["The int(input()) line goes inside try.", "The print of the rolls can go inside try too, after it.", "except ValueError: then the message, indented."] },
+
+{ svc: 3, title: "The Full Ticket", concept: "Boss ticket: everything together",
+  bark: "Last ticket of the night. Price up the whole order. Function, loop, menu, total. Don't let me down!",
+  lesson: `<p>Last ticket of service. You need a function, a loop, a dictionary and a running total. You've used every one of these already.</p>
+<pre class="ex">def count_items(order):
+    n = 0
+    for dish in order:
+        n += 1
+    return n
+
+print(count_items(["soup", "pie"]))</pre>`,
+  notes: `<p>Write the plan in comments first, then fill in the code under each one:</p>
+<pre class="ex"># start the total at 0
+# for each dish in the order
+#     look up its price and add it
+# hand back the total</pre>
+<p>That's how working programmers tackle anything bigger than a few lines.</p>`,
+  mistakes: ["Returning inside the loop, so it stops after the first dish.", "Putting quotes around dish when looking it up."],
+  task: `<p>Write <code>ticket_total(order)</code> that adds up the price of every dish in the order using <code>menu</code>, and returns the total. The print line is already there. Chef will also try other orders.</p>`,
+  expect: "Total: £46",
+  starter: `menu = {"soup": 6, "burger": 14, "pie": 12}\norder = ["soup", "burger", "burger", "pie"]\n\ndef ticket_total(order):\n    # your code here\n\n\nprint(f"Total: £{ticket_total(order)}")\n`,
+  tests: [{ expected: "Total: £46" }, { append: "\nprint(ticket_total([\"pie\", \"pie\"]))", expected: "Total: £46\n24", hidden: true }],
+  requires: [[/def\s+ticket_total/, "keep the ticket_total function"], [/\bfor\b/, "loop over the order with for"], [/\breturn\b/, "return the total"]],
+  hints: ["Inside the function: start total at 0, loop over order, return total.", "For each dish, add menu[dish] to total.", "Indents: the loop is inside the function, the add is inside the loop, the return comes after the loop."] },
+];
+
+const RECIPES = [
+  { name: "Hello kitchen", desc: "Printing and variables", inputs: "", code: `chef = "Dorran"\nprint("Hello, kitchen!")\nprint(f"Head chef tonight: {chef}")\nprint("Soup", "Bread", "Butter")\n` },
+  { name: "Times tables", desc: "for and range()", inputs: "", code: `number = 7\nfor n in range(1, 13):\n    print(f"{n} x {number} = {n * number}")\n` },
+  { name: "Guess the dish", desc: "while, input and if", inputs: "soup\npie\nrisotto", code: `secret = "risotto"\nguesses = 0\nwhile True:\n    guess = input("Guess the special: ")\n    guesses += 1\n    if guess == secret:\n        print(f"Got it in {guesses}!")\n        break\n    print("Nope, try again")\n` },
+  { name: "Shopping list builder", desc: "Lists that grow", inputs: "flour\neggs\nbutter\ndone", code: `shopping = []\nitem = input("Add item (or done): ")\nwhile item != "done":\n    shopping.append(item)\n    item = input("Add item (or done): ")\nprint(f"{len(shopping)} things to buy:")\nfor thing in shopping:\n    print(f"- {thing}")\n` },
+  { name: "Tip splitter", desc: "float() and rounding", inputs: "84.50\n4\n10", code: `bill = float(input("Bill: "))\npeople = int(input("People: "))\ntip = int(input("Tip %: "))\ntotal = bill * (1 + tip / 100)\neach = total / people\nprint(f"Total with tip: £{total:.2f}")\nprint(f"Each pays: £{each:.2f}")\n` },
+  { name: "Sizzle Buzz", desc: "The classic % puzzle", inputs: "", code: `# Multiples of 3 say Sizzle, of 5 say Buzz, both say SizzleBuzz\nfor n in range(1, 21):\n    if n % 15 == 0:\n        print("SizzleBuzz")\n    elif n % 3 == 0:\n        print("Sizzle")\n    elif n % 5 == 0:\n        print("Buzz")\n    else:\n        print(n)\n` },
+  { name: "Stock checker", desc: "Dictionaries and functions", inputs: "", code: `stock = {"eggs": 30, "milk": 2, "flour": 0, "butter": 5}\n\ndef needs_order(amount):\n    return amount < 5\n\nfor item, amount in stock.items():\n    if needs_order(amount):\n        print(f"ORDER {item} (only {amount} left)")\n    else:\n        print(f"{item} is fine")\n` },
+  { name: "Dice roller", desc: "Importing a module", inputs: "", code: `import random\n\nfor roll in range(5):\n    d20 = random.randint(1, 20)\n    if d20 == 20:\n        print(f"{d20}! Critical hit")\n    elif d20 == 1:\n        print(f"{d20}... critical miss")\n    else:\n        print(d20)\n` },
+];
+
+const WIN = ["Beautiful. That's going out!", "Yes! That's what I like to see.", "Service! Lovely work.", "Clean plate. Next!", "Now we're cooking."];
+const FAIL = ["No, no, no. That's not what I asked for. Look at the difference!", "Sent back! Compare yours to mine.", "Close, but close doesn't get plated.", "Again! Check every letter, every space."];
+const ERR = ["It won't even cook! Python can't read it. Read the message.", "What have you done to my stove? Find the line, fix it.", "Stop. Breathe. The error tells you the line. Go and look."];
+const RULE = ["Right answer, wrong method! Do it how I showed you.", "It looks right, but that's not how we do it in my kitchen."];
+const HINT = ["Fine. Listen closely.", "One tip. Don't make me say it twice.", "Here. And then crack on."];
+const pick = a => a[Math.floor(Math.random() * a.length)];
+
+const RANKS = [[0, "Kitchen Porter"], [4, "Commis Chef"], [8, "Chef de Partie"], [14, "Sous Chef"], [19, "Senior Sous"], [24, "Head Chef"]];
+const KEY = "python-kitchen-v2";
+let state = { done: [], code: {}, current: 0, hints: {}, practice: null, practiceInputs: "", voice: true };
+try { const s = JSON.parse(localStorage.getItem(KEY)); if (s) state = Object.assign(state, s); } catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+let interacted = false;
+document.addEventListener("pointerdown", () => { interacted = true; }, { once: true });
+document.addEventListener("keydown", () => { interacted = true; }, { once: true });
+
+/* =================== CHEF =================== */
+const chefEl = $("chef"), bubbleText = $("bubbleText");
+let talkTimer;
+function say(text, mood = "angry") {
+  bubbleText.textContent = text;
+  chefEl.classList.remove("brows-angry", "brows-happy");
+  chefEl.classList.add(mood === "happy" ? "brows-happy" : "brows-angry");
+  chefEl.classList.add("talking");
+  clearTimeout(talkTimer);
+  const stop = () => chefEl.classList.remove("talking");
+  let spoke = false;
+  if (state.voice && interacted && "speechSynthesis" in window) {
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text.replace(/86'd/g, "eighty-sixed"));
+      const voices = speechSynthesis.getVoices();
+      const v = voices.find(v => /en-GB/i.test(v.lang) && /male|daniel|arthur|george|ryan|oliver/i.test(v.name)) || voices.find(v => /en-GB/i.test(v.lang)) || voices.find(v => /^en/i.test(v.lang));
+      if (v) u.voice = v;
+      u.rate = 1.08; u.pitch = 0.75; u.volume = 1;
+      u.onend = stop; u.onerror = stop;
+      speechSynthesis.speak(u); spoke = true;
+      talkTimer = setTimeout(stop, 12000);
+    } catch (e) { spoke = false; }
+  }
+  if (!spoke) talkTimer = setTimeout(stop, Math.min(4000, 400 + text.length * 45));
+}
+if ("speechSynthesis" in window) { try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); } catch (e) {} }
+function renderVoice() { const b = $("voice"); b.setAttribute("aria-pressed", String(state.voice)); b.textContent = `Chef's voice: ${state.voice ? "on" : "off"}`; }
+$("voice").addEventListener("click", () => { state.voice = !state.voice; save(); renderVoice(); if (!state.voice) { try { speechSynthesis.cancel(); } catch (e) {} } else say("Right, I'm back. Listen up!"); });
+
+/* =================== EDITORS =================== */
+function makeEditor(ta, gut, onChange, onRun) {
+  const api = {
+    ta,
+    refresh() {
+      gut.textContent = Array.from({ length: ta.value.split("\n").length }, (_, k) => k + 1).join("\n");
+      ta.style.height = "auto"; ta.style.height = Math.max(260, ta.scrollHeight) + "px";
+    },
+    set(v) { ta.value = v; api.refresh(); },
+    insert(text, back = 0) {
+      const s = ta.selectionStart, e = ta.selectionEnd;
+      ta.setRangeText(text, s, e, "end");
+      if (back) ta.selectionStart = ta.selectionEnd = ta.selectionStart - back;
+      ta.focus(); ta.dispatchEvent(new Event("input"));
+    },
+  };
+  ta.addEventListener("input", () => { api.refresh(); onChange(ta.value); });
+  ta.addEventListener("keydown", ev => {
+    if (ev.key === "Tab" && !ev.shiftKey) { ev.preventDefault(); api.insert("    "); }
+    else if (ev.key === "Enter" && (ev.ctrlKey || ev.metaKey)) { ev.preventDefault(); onRun(); }
+    else if (ev.key === "Enter") {
+      ev.preventDefault();
+      const line = ta.value.slice(0, ta.selectionStart).split("\n").pop();
+      let indent = line.match(/^\s*/)[0];
+      if (/:\s*$/.test(line)) indent += "    ";
+      api.insert("\n" + indent);
+    } else if (ev.key === "Backspace" && ta.selectionStart === ta.selectionEnd) {
+      const before = ta.value.slice(0, ta.selectionStart);
+      const line = before.split("\n").pop();
+      if (line.length >= 4 && /^ +$/.test(line) && line.length % 4 === 0) {
+        ev.preventDefault(); const p = ta.selectionStart;
+        ta.setRangeText("", p - 4, p, "end"); ta.dispatchEvent(new Event("input"));
+      }
+    }
+  });
+  return api;
+}
+const KEYS = [["Tab", "    ", 0], ["( )", "()", 1], [")", ")", 0], ['" "', '""', 1], [":", ":", 0], ["=", " = ", 0], ["[ ]", "[]", 1], ["{ }", "{}", 1], ['f" "', 'f""', 1], ["#", "# ", 0], ["<", " < ", 0], [">", " > ", 0]];
+const editors = {};
+function buildKeys(box) {
+  box.innerHTML = KEYS.map((k, i) => `<button type="button" data-k="${i}" aria-label="Insert ${esc(k[0])}">${esc(k[0])}</button>`).join("");
+  box.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; const k = KEYS[+b.dataset.k]; editors[box.dataset.for].insert(k[1], k[2]); });
+}
+
+/* =================== PYTHON =================== */
+function readFile(x) {
+  if (Sk.builtinFiles === undefined || Sk.builtinFiles.files[x] === undefined) throw "File not found: '" + x + "'";
+  return Sk.builtinFiles.files[x];
+}
+function pyRun(code, inputs) {
+  let out = "", shown = "";
+  const queue = [...(inputs || [])];
+  Sk.configure({
+    output: t => { out += t; shown += esc(t); },
+    read: readFile,
+    inputfun: p => {
+      if (!queue.length) { const E = Sk.builtin.EOFError || Sk.builtin.RuntimeError || Sk.builtin.Exception; throw new E("ran out of inputs"); }
+      const v = queue.shift(); shown += `<span class="in">${esc(p || "")}${esc(v)}</span>\n`; return v;
+    },
+    inputfunTakesPrompt: true,
+    execLimit: 3000,
+    __future__: Sk.python3,
+  });
+  return Sk.misceval.asyncToPromise(() => Sk.importMainWithBody("<stdin>", false, code, true))
+    .then(() => ({ out, shown }), err => ({ out, shown, err }));
+}
+const tidy = s => s.replace(/\r/g, "").split("\n").map(l => l.replace(/\s+$/, "")).join("\n").replace(/\n+$/, "");
+const sortLines = s => tidy(s).split("\n").sort().join("\n");
+
+function friendly(err) {
+  const raw = String(err && err.toString ? err.toString() : err);
+  let line = null;
+  try { if (err.traceback && err.traceback.length) line = err.traceback[0].lineno; } catch (e) {}
+  const m = raw.match(/on line (\d+)/); if (!line && m) line = m[1];
+  const at = line ? ` (line ${line})` : "";
+  if (/ran out of inputs/.test(raw)) return "Your code asked for more input() answers than it was given. Add more lines to the Inputs box, or check how many times input() runs.";
+  if (/TimeLimitError/.test(raw)) return "Your code kept running and never finished. A loop probably never ends. Check that something inside it changes.";
+  if (/IndentationError|unindent|expected an indented block/i.test(raw)) return `The spacing is off${at}. Lines under an if, for, while, def or try need 4 spaces in. Lines after them come back out.`;
+  if (/SyntaxError|ParseError|TokenError/.test(raw)) return `Python couldn't read your code${at}. Look for a missing bracket, quote mark, or a colon at the end of an if/for/while/def line.`;
+  const n = raw.match(/NameError: name '(\w+)'/);
+  if (n) return `Python doesn't know what '${n[1]}' is${at}. Check the spelling. If it's meant to be text, it needs quote marks.`;
+  if (/TypeError/.test(raw) && /str|int|concatenate/.test(raw)) return `You're mixing text and numbers${at}. input() gives text, so int() may be missing. Or use an f-string to join them.`;
+  if (/ValueError/.test(raw)) return `A value couldn't be converted${at}, like int("four"). try/except can catch this.`;
+  if (/KeyError/.test(raw)) return `That key isn't in the dictionary${at}. Keys must match exactly, including capitals. Did you put quotes around a variable?`;
+  if (/IndexError/.test(raw)) return `You asked for a list position that doesn't exist${at}. Lists start at 0, and the last item is [-1].`;
+  if (/ZeroDivisionError/.test(raw)) return `You divided by zero${at}.`;
+  if (/AttributeError/.test(raw)) return `That method doesn't exist for this type${at}. Check spelling, like .append() for lists and .upper() for strings. Python said: ${raw}`;
+  return raw;
+}
+
+/* =================== TICKETS VIEW =================== */
+function unlocked(i) { return i === 0 || state.done.includes(i - 1) || state.done.includes(i); }
+function renderRail() {
+  let html = "", lastSvc = -1;
+  LEVELS.forEach((l, i) => {
+    if (l.svc !== lastSvc) { html += `<span class="svc">${esc(SERVICES[l.svc].split(":")[0])}</span>`; lastSvc = l.svc; }
+    const cls = ["tab", state.done.includes(i) ? "done" : "", i === state.current ? "active" : "", unlocked(i) ? "" : "locked"].join(" ");
+    html += `<button class="${cls}" data-i="${i}" title="${esc(l.title)}"${unlocked(i) ? "" : ' aria-disabled="true"'}>#${String(i + 1).padStart(2, "0")}</button>`;
+  });
+  $("rail").innerHTML = html;
+  const n = state.done.length;
+  let rank = RANKS[0][1]; for (const [need, name] of RANKS) if (n >= need) rank = name;
+  $("rankName").textContent = rank;
+  $("rankBar").style.width = (n / LEVELS.length * 100) + "%";
+  $("rankCount").textContent = `${n} of ${LEVELS.length} tickets cleared`;
+  const act = $("rail").querySelector(".active"); if (act) act.scrollIntoView({ block: "nearest", inline: "center" });
+}
+function addTryButtons(root) {
+  root.querySelectorAll("pre.ex").forEach(pre => {
+    if (pre.parentElement.classList.contains("ex-wrap")) return;
+    const w = document.createElement("div"); w.className = "ex-wrap";
+    pre.replaceWith(w); w.appendChild(pre);
+    const b = document.createElement("button"); b.className = "try"; b.type = "button"; b.textContent = "Try it";
+    b.addEventListener("click", () => loadIntoPractice(pre.textContent, "", "Good. Play with it. Change things and see what happens."));
+    w.appendChild(b);
+  });
+}
+function renderTicket() {
+  const i = state.current, l = LEVELS[i], shown = state.hints[i] || 0;
+  $("ticket").innerHTML = `
+    <div class="ticket-head"><span>TICKET #${String(i + 1).padStart(2, "0")} · ${esc(SERVICES[l.svc])}</span><span>${state.done.includes(i) ? "CLEARED ✓" : "ON THE RAIL"}</span></div>
+    <h2>${esc(l.title)}</h2>
+    <div class="concept">${esc(l.concept)}</div>
+    <div class="lesson">${l.lesson}</div>
+    <details class="sec"><summary>Chef's notes: go deeper</summary>${l.notes}</details>
+    <details class="sec"><summary>Common mistakes</summary><ul class="mistakes">${l.mistakes.map(m => `<li>${m}</li>`).join("")}</ul></details>
+    <div class="sec"><h3>The order</h3>${l.task}<div class="expect">${esc(l.expect)}</div></div>
+    <div class="hints">${l.hints.slice(0, shown).map((h, k) => `<div class="hint"><b>HINT ${k + 1}</b>${esc(h)}</div>`).join("")}</div>`;
+  addTryButtons($("ticket"));
+  $("hintBtn").disabled = shown >= l.hints.length;
+  $("hintBtn").textContent = shown >= l.hints.length ? "No more hints" : `Ask chef for a hint (${l.hints.length - shown} left)`;
+}
+function loadLevel(i, speak = true) {
+  state.current = i; save();
+  editors.T.set(state.code[i] ?? LEVELS[i].starter);
+  renderRail(); renderTicket();
+  $("verdict").innerHTML = "";
+  $("consoleT").innerHTML = `<span class="dim">Output from print() shows up here.</span>`;
+  if (speak) say(LEVELS[i].bark);
+}
+
+async function runTicket() {
+  if (!window.Sk) return;
+  const i = state.current, l = LEVELS[i], code = editors.T.ta.value;
+  const btn = $("runT"); btn.disabled = true; btn.textContent = "Cooking…";
+  $("verdict").innerHTML = "";
+  let first = null, failure = null;
+  for (const t of l.tests) {
+    const r = await pyRun(code + (t.append || ""), t.inputs);
+    if (!first) first = r;
+    if (r.err) { failure = { type: "error", msg: friendly(r.err), r }; break; }
+    const ok = t.anyOrder ? sortLines(r.out) === sortLines(t.expected) : tidy(r.out) === tidy(t.expected);
+    if (!ok) { failure = { type: "wrong", t, r }; break; }
+  }
+  $("consoleT").innerHTML = (failure && failure.r ? failure.r : first).shown || `<span class="dim">(nothing was printed)</span>`;
+  if (!failure) for (const [re, msg] of (l.requires || [])) if (!re.test(code)) { failure = { type: "rule", msg }; break; }
+  const v = $("verdict");
+  if (!failure) {
+    if (!state.done.includes(i)) state.done.push(i);
+    save(); renderRail(); renderTicket();
+    const last = i === LEVELS.length - 1;
+    v.innerHTML = `<div class="verdict ok"><strong>${last ? "Service complete, Head Chef!" : "Service! Ticket cleared."}</strong>
+      <div>${last ? "You've written decisions, loops, lists, dictionaries, functions and error handling in real Python. Next step: the same thing in .py files on your own machine. The Cookbook's last page shows you how." : "The next ticket is on the rail."}</div>
+      ${last ? "" : `<div><button class="btn primary" id="next">Next ticket →</button></div>`}</div>`;
+    const nb = $("next"); if (nb) nb.addEventListener("click", () => { loadLevel(i + 1); window.scrollTo({ top: 0, behavior: "smooth" }); });
+    say(last ? "That's the end of service. Head Chef. Proud of you. Now go and write it for real." : pick(WIN), "happy");
+  } else if (failure.type === "error") {
+    $("consoleT").innerHTML += `\n<span class="er">${esc(String(failure.r.err))}</span>`;
+    v.innerHTML = `<div class="verdict bad"><strong>Sent back</strong><div>${esc(failure.msg)}</div></div>`;
+    say(pick(ERR));
+  } else if (failure.type === "rule") {
+    v.innerHTML = `<div class="verdict bad"><strong>Right plate, wrong method</strong><div>The output is right, but chef wants it done properly: ${esc(failure.msg)}.</div></div>`;
+    say(pick(RULE));
+  } else {
+    const t = failure.t;
+    const inp = t.inputs ? `<div>Order typed in: <code>${esc(t.inputs.join(", "))}</code></div>` : "";
+    const note = t.hidden ? "<div>That was one of chef's own taste tests, checking your function with different numbers.</div>" : "";
+    v.innerHTML = `<div class="verdict bad"><strong>Not quite</strong>${inp}${note}
+      <div class="diff"><div><span class="label">Chef wanted</span><pre>${esc(tidy(t.expected))}</pre></div><div><span class="label">You printed</span><pre>${esc(tidy(failure.r.out)) || "(nothing)"}</pre></div></div>
+      <div class="status">Spot the difference. Spelling, capitals, spaces and punctuation all count.</div></div>`;
+    say(pick(FAIL));
+  }
+  btn.disabled = false; btn.textContent = "Send to the pass";
+}
+
+/* =================== PRACTICE VIEW =================== */
+function loadIntoPractice(code, inputs, line) {
+  editors.P.set(code); state.practice = code;
+  $("inputsP").value = inputs; state.practiceInputs = inputs; save();
+  show("practice");
+  if (line) say(line, "happy");
+  $("consoleP").innerHTML = `<span class="dim">Loaded. Press Run it.</span>`;
+}
+$("cards").innerHTML = RECIPES.map((r, i) => `<button class="card" data-r="${i}"><b>${esc(r.name)}</b><span>${esc(r.desc)}</span></button>`).join("");
+$("cards").addEventListener("click", e => { const b = e.target.closest(".card"); if (!b) return; const r = RECIPES[+b.dataset.r]; loadIntoPractice(r.code, r.inputs, `${r.name}. Run it, then change it. Make it yours.`); window.scrollTo({ top: $("view-practice").offsetTop - 60, behavior: "smooth" }); });
+$("inputsP").addEventListener("input", () => { state.practiceInputs = $("inputsP").value; save(); });
+async function runPractice() {
+  if (!window.Sk) return;
+  const btn = $("runP"); btn.disabled = true; btn.textContent = "Cooking…";
+  const ins = $("inputsP").value.replace(/\r/g, "").split("\n");
+  if (ins.length && ins[ins.length - 1] === "") ins.pop();
+  const r = await pyRun(editors.P.ta.value, ins);
+  let html = r.shown || (r.err ? "" : `<span class="dim">(ran fine, nothing was printed)</span>`);
+  if (r.err) html += `${html ? "\n" : ""}<span class="er">${esc(String(r.err))}</span>\n<span class="dim">Chef says: ${esc(friendly(r.err))}</span>`;
+  $("consoleP").innerHTML = html;
+  btn.disabled = false; btn.textContent = "Run it";
+}
+$("clearP").addEventListener("click", () => { editors.P.set(""); state.practice = ""; save(); editors.P.ta.focus(); });
+
+/* =================== NAV =================== */
+const VIEWS = ["tickets", "practice", "cookbook"];
+const VIEW_LINES = { practice: "Practice station's yours. Break things. Nobody's watching.", cookbook: "Every good chef has a book. Read it, then cook." };
+function show(name, speak) {
+  if (!VIEWS.includes(name)) name = "tickets";
+  VIEWS.forEach(v => { $("view-" + v).hidden = v !== name; });
+  document.querySelectorAll(".navbtn").forEach(b => b.setAttribute("aria-current", b.dataset.view === name ? "page" : "false"));
+  if (location.hash.slice(1) !== name) { try { history.replaceState(null, "", "#" + name); } catch (e) {} }
+  if (speak) say(name === "tickets" ? LEVELS[state.current].bark : VIEW_LINES[name], name === "tickets" ? "angry" : "happy");
+}
+document.querySelectorAll(".navbtn").forEach(b => b.addEventListener("click", () => show(b.dataset.view, true)));
+window.addEventListener("hashchange", () => show(location.hash.slice(1)));
+$("rail").addEventListener("click", e => {
+  const b = e.target.closest(".tab"); if (!b) return;
+  const i = +b.dataset.i;
+  if (!unlocked(i)) { say("Oi! One ticket at a time. Clear the one before it first."); return; }
+  show("tickets"); loadLevel(i);
+});
+$("hintBtn").addEventListener("click", () => {
+  const i = state.current, n = (state.hints[i] || 0) + 1;
+  state.hints[i] = n; save(); renderTicket();
+  say(`${pick(HINT)} ${LEVELS[i].hints[n - 1]}`);
+});
+$("resetT").addEventListener("click", () => {
+  const b = $("resetT");
+  if (b.dataset.confirm) { delete b.dataset.confirm; b.textContent = "Reset code"; delete state.code[state.current]; save(); loadLevel(state.current, false); }
+  else { b.dataset.confirm = "1"; b.textContent = "Tap again to wipe"; setTimeout(() => { delete b.dataset.confirm; b.textContent = "Reset code"; }, 3000); }
+});
+$("runT").addEventListener("click", runTicket);
+$("runP").addEventListener("click", runPractice);
+
+/* =================== BOOT =================== */
+editors.T = makeEditor($("codeT"), $("gutT"), v => { state.code[state.current] = v; save(); }, runTicket);
+editors.P = makeEditor($("codeP"), $("gutP"), v => { state.practice = v; save(); }, runPractice);
+document.querySelectorAll(".keys").forEach(buildKeys);
+addTryButtons($("book"));
+editors.P.set(state.practice ?? RECIPES[0].code);
+$("inputsP").value = state.practiceInputs || "";
+renderVoice();
+const ready = !!window.Sk;
+document.querySelectorAll(".engine").forEach(e => { e.textContent = ready ? "Python 3 · Ctrl+Enter runs" : "Python failed to load"; });
+document.querySelectorAll(".run-btn").forEach(b => { b.disabled = !ready; });
+if (!ready) ["consoleT", "consoleP"].forEach(id => { $(id).innerHTML = `<span class="er">The Python engine didn't load. Check your connection and refresh the page.</span>`; });
+if (state.current >= LEVELS.length || !unlocked(state.current)) state.current = 0;
+loadLevel(state.current, false);
+bubbleText.textContent = state.done.length ? `Back on the line. ${LEVELS[state.current].bark}` : "Right. New starter. Whites on, ears open. First ticket's on the rail. Tap a ticket to hear me call it!";
+show(location.hash.slice(1) || "tickets");
+</script>
+<script>
+if ("serviceWorker" in navigator) { window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); }); }
+</script>
+</body>
+</html>
