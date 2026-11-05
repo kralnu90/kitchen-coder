@@ -1,0 +1,207 @@
+{
+ "0": {
+  "good": [
+   "print(\"Yes, Chef!\")"
+  ],
+  "bad": [
+   "print(\"Yes Chef!\")",
+   "Print(\"Yes, Chef!\")"
+  ]
+ },
+ "1": {
+  "good": [
+   "dish = \"Tomato soup\"\nprint(dish)"
+  ],
+  "bad": [
+   "dish = \"Tomato soup\"\nprint(\"Tomato soup\")",
+   "print(\"Tomato soup\")  # dish = x print(dish)"
+  ]
+ },
+ "2": {
+  "good": [
+   "tables = 6\nseats = 4\nprint(tables * seats)"
+  ],
+  "bad": [
+   "print(24)",
+   "tables = 6\nseats = 4\nprint(\"24\")  # tables * seats"
+  ]
+ },
+ "3": {
+  "good": [
+   "dish = \"Risotto\"\ncovers = 8\nprint(f\"{covers} x {dish}\")",
+   "dish = \"Risotto\"\ncovers = 8\nprint(f'{covers} x {dish}')"
+  ],
+  "bad": [
+   "dish = \"Risotto\"\ncovers = 8\nprint(\"8 x Risotto\")  # f\"\"",
+   "dish = \"Risotto\"\ncovers = 8\nprint(f\"8 x {dish}\")"
+  ]
+ },
+ "4": {
+  "good": [
+   "order = input()\nprint(f\"Order up: {order}\")"
+  ],
+  "bad": [
+   "order = input()\nprint(\"Order up: Fish and chips\")"
+  ]
+ },
+ "5": {
+  "good": [
+   "covers = int(input())\nprint(covers * 2)"
+  ],
+  "bad": [
+   "print(input() * 2)",
+   "covers = input()\nprint(10)  # int("
+  ]
+ },
+ "6": {
+  "good": [
+   "dish = input()\nprint(f\"{dish.upper()}!\")",
+   "print(input().upper() + \"!\")"
+  ],
+  "bad": []
+ },
+ "7": {
+  "good": [
+   "t = int(input())\nif t <= 5:\n    print(\"Safe\")\nelse:\n    print(\"Too warm\")"
+  ],
+  "bad": [
+   "t = int(input())\nif t < 5:\n    print(\"Safe\")\nelse:\n    print(\"Too warm\")"
+  ]
+ },
+ "8": {
+  "good": [
+   "t = int(input())\nif t < 50:\n    print(\"Rare\")\nelif t < 60:\n    print(\"Medium\")\nelse:\n    print(\"Well done\")"
+  ],
+  "bad": [
+   "t = int(input())\nif t < 60:\n    print(\"Medium\")\nelif t < 50:\n    print(\"Rare\")\nelse:\n    print(\"Well done\")"
+  ]
+ },
+ "9": {
+  "good": [
+   "temp = int(input())\nminutes = int(input())\nif temp >= 63 and minutes <= 90:\n    print(\"Serve\")\nelse:\n    print(\"Bin it\")"
+  ],
+  "bad": [
+   "t = int(input())\nm = int(input())\nif t >= 63 or m <= 90:\n    print(\"Serve\")\nelse:\n    print(\"Bin it\")"
+  ]
+ },
+ "10": {
+  "good": [
+   "menu = [\"soup\", \"burger\", \"pie\"]\ndish = input()\nif dish in menu:\n    print(\"Coming up\")\nelse:\n    print(\"86'd, chef\")"
+  ],
+  "bad": [
+   "menu = [\"soup\", \"burger\", \"pie\"]\ndish = input()\nif dish == \"burger\" or dish == \"pie\":  # in menu\n    print(\"Coming up\")\nelse:\n    print(\"86'd, chef\")"
+  ]
+ },
+ "11": {
+  "good": [
+   "prep = [\"onions\", \"carrots\", \"celery\"]\nprint(prep[0])\nprint(len(prep))"
+  ],
+  "bad": [
+   "prep = [\"onions\", \"carrots\", \"celery\"]\nprint(\"onions\")\nprint(3)  # prep[0] len("
+  ]
+ },
+ "12": {
+  "good": [
+   "prep = [\"onions\", \"carrots\"]\njob = input()\nprep.append(job)\nprint(len(prep))\nprint(prep[-1])"
+  ],
+  "bad": [
+   "prep = [\"onions\", \"carrots\"]\njob = input()\nprep.append(job)\nprint(3)\nprint(prep[-1])"
+  ]
+ },
+ "13": {
+  "good": [
+   "prep = [\"onions\", \"carrots\", \"celery\", \"garlic\"]\nfor item in prep:\n    print(f\"- {item}\")",
+   "prep = [\"onions\", \"carrots\", \"celery\", \"garlic\"]\nfor job in prep:\n    print(\"-\", job)"
+  ],
+  "bad": [
+   "prep = [\"onions\", \"carrots\", \"celery\", \"garlic\"]\nfor item in [\"onions\", \"carrots\", \"celery\", \"garlic\"]:\n    print(f\"- {item}\")",
+   "print(\"- onions\\n- carrots\\n- celery\\n- garlic\")  # for x in y"
+  ]
+ },
+ "14": {
+  "good": [
+   "for n in range(5, 0, -1):\n    print(n)\nprint(\"Ding!\")"
+  ],
+  "bad": [
+   "for n in range(5, 1, -1):\n    print(n)\nprint(\"Ding!\")"
+  ]
+ },
+ "15": {
+  "good": [
+   "stock = 2\nwhile stock < 20:\n    stock += 4\n    print(stock)",
+   "stock = 2\nwhile stock < 20:\n    stock = stock + 4\n    print(stock)"
+  ],
+  "bad": [
+   "stock = 2\nwhile stock < 20:\n    print(stock)\n    stock += 4",
+   "stock = 2\nfor n in [6, 10, 14, 18, 22]:  # while\n    print(n)"
+  ]
+ },
+ "16": {
+  "good": [
+   "tables = [4, 2, 6, 3]\ntotal = 0\nfor t in tables:\n    total += t\nprint(total)"
+  ],
+  "bad": [
+   "tables = [4, 2, 6, 3]\ntotal = 0\nfor t in [15]:\n    total += t\nprint(total)"
+  ]
+ },
+ "17": {
+  "good": [
+   "prices = [6, 14, 12, 9, 18]\nfor price in prices:\n    if price > 10:\n        print(price)"
+  ],
+  "bad": [
+   "prices = [6, 14, 12, 9, 18]\nfor p in [14, 12, 18]:\n    if p > 10:\n        print(p)",
+   "prices = [6, 14, 12, 9, 18]\nfor p in prices:\n    if p >= 10:\n        print(p)"
+  ]
+ },
+ "18": {
+  "good": [
+   "def plate(dish):\n    print(f\"Plating {dish}\")\n\nplate(\"Duck\")\nplate(\"Salmon\")"
+  ],
+  "bad": [
+   "def plate(dish):\n    print(\"Plating Duck\")\n\nplate(\"Duck\")\nprint(\"Plating Salmon\")"
+  ]
+ },
+ "19": {
+  "good": [
+   "def portions(total, size):\n    return total // size\n\nprint(portions(1000, 150))\nprint(portions(2400, 200))"
+  ],
+  "bad": [
+   "def portions(total, size):\n    return total / size\n\nprint(portions(1000, 150))\nprint(portions(2400, 200))",
+   "def portions(total, size):\n    return 6\n\nprint(6)\nprint(12)"
+  ]
+ },
+ "20": {
+  "good": [
+   "menu = {\"soup\": 6, \"burger\": 14, \"pie\": 12}\ndish = input()\nprint(f\"{dish}: £{menu[dish]}\")"
+  ],
+  "bad": [
+   "menu = {\"soup\": 6, \"burger\": 14, \"pie\": 12}\ndish = input()\nprices = {\"soup\": 6, \"burger\": 14, \"pie\": 12}  # menu[\nprint(f\"{dish}: £{prices[dish]}\")"
+  ]
+ },
+ "21": {
+  "good": [
+   "menu = {\"soup\": 6, \"burger\": 14}\nmenu[\"soup\"] = 7\nmenu[\"pie\"] = 12\nfor dish, price in menu.items():\n    print(f\"{dish}: £{price}\")",
+   "menu = {\"soup\": 6, \"burger\": 14}\nmenu[\"soup\"] = 7\nmenu[\"pie\"] = 12\nfor k, v in menu.items():\n    print(k + \": £\" + str(v))"
+  ],
+  "bad": [
+   "menu = {\"soup\": 6, \"burger\": 14}\nprint(\"soup: £7\")\nprint(\"burger: £14\")\nprint(\"pie: £12\")  # .items()"
+  ]
+ },
+ "22": {
+  "good": [
+   "try:\n    covers = int(input())\n    print(covers * 2)\nexcept ValueError:\n    print(\"That's not a number, chef\")",
+   "try:\n    n = int(input())\nexcept ValueError:\n    print(\"That's not a number, chef\")\nelse:\n    print(n * 2)"
+  ],
+  "bad": [
+   "covers = int(input())\nprint(covers * 2)"
+  ]
+ },
+ "23": {
+  "good": [
+   "menu = {\"soup\": 6, \"burger\": 14, \"pie\": 12}\norder = [\"soup\", \"burger\", \"burger\", \"pie\"]\n\ndef ticket_total(order):\n    total = 0\n    for dish in order:\n        total += menu[dish]\n    return total\n\n\nprint(f\"Total: £{ticket_total(order)}\")"
+  ],
+  "bad": [
+   "menu = {\"soup\": 6, \"burger\": 14, \"pie\": 12}\norder = [\"soup\", \"burger\", \"burger\", \"pie\"]\n\ndef ticket_total(order):\n    for dish in order:\n        return 46\n\n\nprint(f\"Total: £{ticket_total(order)}\")"
+  ]
+ }
+}

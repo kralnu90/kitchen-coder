@@ -30,6 +30,10 @@ A full read of the game plus a check of all 24 tickets, as the first step of bri
 12. **App icon.** The manifest marks the icons as "any maskable", so Android crops the normal icon. Add a separate maskable icon.
 13. **Key bar gaps.** No keys for `.`, `'`, `_`, `+` or `-`, which beginners need often on a phone keyboard.
 
+## Status
+
+Bugs 1 to 5 and polish items 6 to 13 were all fixed on 5 Nov 2026, along with stage 1 (the test suite). Python now runs on Pyodide, which is real CPython 3.12.
+
 ## Planned stages
 
 1. Safety net: an automated check that runs every ticket's tests against real Python, so later changes can't break a ticket.

@@ -1,0 +1,17 @@
+name: Ticket tests
+# Runs every ticket's good answers and cheats through the real marking on each push.
+on:
+  push:
+  pull_request:
+jobs:
+  tickets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: node tests/check.js
