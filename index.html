@@ -266,6 +266,7 @@ footer { font-size: .82rem; color: var(--muted); padding-block: 0 30px; }
     <button class="navbtn" data-view="tickets" aria-current="page">Tickets</button>
     <button class="navbtn" data-view="practice">Practice station</button>
     <button class="navbtn" data-view="cookbook">Cookbook</button>
+    <button class="navbtn" data-install type="button">Install app</button>
     <button class="voice" id="voice" aria-pressed="true">Chef's voice: on</button>
   </div>
 </div>
@@ -1347,5 +1348,43 @@ show(location.hash.slice(1) || "tickets");
 <script>
 if ("serviceWorker" in navigator) { window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); }); }
 </script>
+
+<!-- Kralnu Games install kit: Install button, Android/desktop prompt and iPhone instructions -->
+<style id="kg-install-style">
+html:not(.kg-can-install) [data-install]{display:none!important}
+.kg-sheet{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:2147483000;width:min(420px,calc(100% - 24px));background:#1d2429;color:#f5f6f4;border:2px solid #3a444b;border-radius:16px;padding:14px 16px;box-shadow:0 12px 30px rgba(0,0,0,.35);font:15px/1.45 system-ui,sans-serif;display:grid;gap:10px;text-align:left}
+.kg-sheet b{font-size:17px}
+.kg-sheet p{margin:0}
+.kg-row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.kg-row button{font:inherit;font-weight:700;border-radius:999px;padding:9px 16px;cursor:pointer;border:2px solid #3a444b;background:transparent;color:inherit}
+.kg-row .kg-yes{background:#f0912e;border-color:#f0912e;color:#ffffff}
+.kg-row button:focus-visible{outline:3px solid #f0912e;outline-offset:2px}
+</style>
+<script id="kg-install">
+(function(){
+  var NAME='Python Kitchen',KEY='pk-install-snooze',AUTO=40000;
+  var evt=null,sheet=null,root=document.documentElement;
+  var ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  function standalone(){return matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||navigator.standalone===true}
+  function can(){return !standalone()&&(!!evt||ios)}
+  function sync(){root.classList.toggle('kg-can-install',can())}
+  function snoozed(){try{return Date.now()<(+localStorage.getItem(KEY)||0)}catch(e){return false}}
+  function snooze(days){try{localStorage.setItem(KEY,String(Date.now()+days*864e5))}catch(e){}}
+  function close(){if(sheet){sheet.remove();sheet=null}}
+  function show(auto){close();var iosHelp=!evt&&ios;sheet=document.createElement('div');sheet.className='kg-sheet';sheet.setAttribute('role','dialog');sheet.setAttribute('aria-label','Install '+NAME);
+    sheet.innerHTML='<b>Install '+NAME+'?</b><p>'+(iosHelp?'In Safari, tap the <b>Share</b> button, then <b>Add to Home Screen</b>. It then opens full screen and works offline.':'Put it on your home screen and play full screen like a proper app, even without a signal.')+'</p><div class="kg-row"><button type="button" class="kg-no">'+(iosHelp?'Got it':'Not now')+'</button>'+(iosHelp?'':'<button type="button" class="kg-yes">Install</button>')+'</div>';
+    document.body.appendChild(sheet);
+    sheet.querySelector('.kg-no').onclick=function(){snooze(auto?3:1);close()};
+    var y=sheet.querySelector('.kg-yes');if(y){y.onclick=install;y.focus()}}
+  function install(){close();var e=evt;evt=null;if(!e){sync();return}e.prompt();Promise.resolve(e.userChoice).then(sync,sync)}
+  addEventListener('beforeinstallprompt',function(e){e.preventDefault();evt=e;sync();if(AUTO&&!snoozed())setTimeout(function(){if(evt&&!sheet&&!standalone())show(true)},AUTO)});
+  addEventListener('appinstalled',function(){evt=null;sync();close()});
+  document.addEventListener('click',function(e){var b=e.target&&e.target.closest&&e.target.closest('[data-install]');if(!b)return;e.preventDefault();e.stopPropagation();if(evt)install();else if(ios)show(false)},true);
+  sync();
+  window.KralnuInstall={can:can,open:function(){show(false)}};
+  
+})();
+</script>
+
 </body>
 </html>
