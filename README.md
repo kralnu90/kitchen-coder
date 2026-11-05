@@ -1,26 +1,40 @@
 # Python Kitchen
 
-Learn Python by working the pass. Chef Dorran calls the orders, you write real Python 3 to clear the tickets, and you climb the brigade from Kitchen Porter to Head Chef.
+Learn Python by working the pass. Chef Dorran calls the orders, you write real Python 3 to clear the tickets, and you climb the brigade from Kitchen Porter to Head Chef, then graduate by building a real program of your own.
 
-**Play it:** https://kralnu90.github.io/kitchen-coder/
+**Play it:** https://kralnugames.com/kitchen-coder/
 
 A [Kralnu Games](https://kralnugames.com) project.
 
 ## What's in it
 
-- **24 tickets** across four services, each with a short lesson, deeper "Chef's notes", common mistakes, and a task checked against real output:
+- **25 tickets:** 24 across four services, then a graduation project, each with a short lesson, deeper "Chef's notes", common mistakes, and a task checked against real output:
   - **Breakfast:** `print`, variables, maths, f-strings, `input()`, `int()`
   - **Lunch:** string methods, `if`/`else`, `elif`, `and`/`or`/`not`, `in`
   - **Dinner:** lists, `append`, `for`, `range()`, `while`, running totals, filtering
   - **Late service:** functions, `return`, dictionaries, `.items()`, `try`/`except`, and a boss ticket
+  - **Graduation:** build a till that takes orders until the server types done, using everything from the course
+- **Main menu** with carry on, the practice station, cookbook, recap quizzes, office, settings, a review form, Ko-fi and install.
+- **Guided first ticket.** A one-minute tour of ticket 1 for brand-new players: the order, the stove and the pass. Chef can even type the first answer for you.
+- **Recap quizzes.** Four quick questions after each service, with an explanation for every answer. Nothing is locked behind them.
 - **Fair checking.** Tickets are tested with several inputs, and chef runs hidden taste tests with different data, so typing out the answer won't pass. Technique checks ignore comments and text inside strings.
 - **Hints, not answers.** Up to three hints per ticket, one at a time. When you're wrong, you see what chef wanted next to what you printed.
 - **Friendly errors.** Python's error messages are translated into plain English with the line number.
 - **Practice station.** A free editor with an Inputs box for `input()` and eight recipe cards to play with. Nothing is marked.
 - **Cookbook.** A full Python reference, with a **Try it** button on every example that sends it to the practice station.
-- **Chef's voice.** Chef Dorran reads orders out loud using your device's text-to-speech. Toggle it off in the nav bar.
-- **Office.** Backup codes to move progress between devices, a voice chooser, feedback, and a confirmed Start again.
+- **Chef's voice (optional).** Chef Dorran can read his lines out loud using your device's text-to-speech. It's off by default because device voices can sound robotic, and the ⓘ next to the switch explains it. Turn it on and pick a voice in Settings.
+- **Office.** Backup codes to move progress between devices, feedback, and a confirmed Start again.
 - **Installable.** Add it to your home screen and it works offline after the first visit.
+
+## Changelog
+
+### 2.1 · 5 November 2026
+- **Main menu** on launch, with everything in one place: carry on, practice station, cookbook, recap quizzes, office, settings, leave a review, support on Ko-fi, install and more games.
+- **Guided first ticket** for brand-new players.
+- **Recap quizzes** after each service.
+- **Graduation project:** ticket 25, The Pass Is Yours. Clear it to become Chef Patron.
+- **Chef's voice is now off by default**, with a note explaining it's your device's text-to-speech and that we recommend leaving it off. Turn it on in Settings.
+- Credits: "Ideas, design and testing by Kris. Built with Claude, an AI by Anthropic."
 
 ## How it works
 
@@ -76,3 +90,7 @@ Own files load network-first, so updates reach players without changing `sw.js`.
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+---
+
+Ideas, design and testing by Kris. Built with Claude, an AI by Anthropic.

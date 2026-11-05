@@ -203,5 +203,16 @@
   "bad": [
    "menu = {\"soup\": 6, \"burger\": 14, \"pie\": 12}\norder = [\"soup\", \"burger\", \"burger\", \"pie\"]\n\ndef ticket_total(order):\n    for dish in order:\n        return 46\n\n\nprint(f\"Total: £{ticket_total(order)}\")"
   ]
+ },
+ "24": {
+  "good": [
+   "menu = {\"soup\": 6, \"burger\": 14, \"pie\": 12, \"cake\": 5}\n\ndef line_price(dish, qty):\n    return menu[dish] * qty\n\norders = []\ndish = input(\"Dish (or done): \")\nwhile dish != \"done\":\n    if dish not in menu:\n        print(f\"Not on the menu: {dish}\")\n    else:\n        try:\n            qty = int(input(\"How many? \"))\n            orders.append([dish, qty])\n        except ValueError:\n            print(\"How many? Numbers only\")\n    dish = input(\"Dish (or done): \")\n\ntotal = 0\nfor dish, qty in orders:\n    price = line_price(dish, qty)\n    total += price\n    print(f\"{qty} x {dish} = £{price}\")\nprint(f\"Total: £{total}\")",
+   "menu = {\"soup\": 6, \"burger\": 14, \"pie\": 12, \"cake\": 5}\n\ndef line_price(dish, qty):\n    price = menu[dish] * qty\n    return price\n\ndishes = []\ncounts = []\nwhile True:\n    dish = input(\"Dish: \")\n    if dish == \"done\":\n        break\n    if dish in menu:\n        try:\n            counts.append(int(input(\"How many? \")))\n            dishes.append(dish)\n        except ValueError:\n            print(\"How many? Numbers only\")\n    else:\n        print(\"Not on the menu: \" + dish)\n\ntotal = 0\nfor i in range(len(dishes)):\n    total = total + line_price(dishes[i], counts[i])\n    print(f\"{counts[i]} x {dishes[i]} = £{line_price(dishes[i], counts[i])}\")\nprint(f\"Total: £{total}\")"
+  ],
+  "bad": [
+   "menu = {\"soup\": 6, \"burger\": 14, \"pie\": 12, \"cake\": 5}\n\ndef line_price(dish, qty):\n    return menu[dish] * qty\n\nprint(\"Not on the menu: pizza\")\nprint(\"How many? Numbers only\")\nprint(\"2 x soup = £12\")\nprint(\"1 x burger = £14\")\nprint(\"Total: £26\")",
+   "menu = {\"soup\": 6, \"burger\": 14, \"pie\": 12, \"cake\": 5}\n\ndef line_price(dish, qty):\n    return menu[dish] * qty\n\norders = []\ndish = input(\"Dish (or done): \")\nwhile dish != \"done\":\n    if dish not in menu:\n        print(f\"Not on the menu: {dish}\")\n    else:\n        qty = input(\"How many? \")\n        if qty.isdigit():\n            orders.append([dish, int(qty)])\n        else:\n            print(\"How many? Numbers only\")\n    dish = input(\"Dish (or done): \")\n\ntotal = 0\nfor dish, qty in orders:\n    price = line_price(dish, qty)\n    total += price\n    print(f\"{qty} x {dish} = £{price}\")\nprint(f\"Total: £{total}\")",
+   "menu = {\"soup\": 6, \"burger\": 14, \"pie\": 12, \"cake\": 5}\n\ndef line_price(dish, qty):\n    return menu[dish] * qty\n\norders = []\ndish = input(\"Dish (or done): \")\nwhile dish != \"done\":\n    if True:\n        try:\n            qty = int(input(\"How many? \"))\n            orders.append([dish, qty])\n        except ValueError:\n            print(\"How many? Numbers only\")\n    dish = input(\"Dish (or done): \")\n\ntotal = 0\nfor dish, qty in orders:\n    price = line_price(dish, qty)\n    total += price\n    print(f\"{qty} x {dish} = £{price}\")\nprint(f\"Total: £{total}\")"
+  ]
  }
 }

@@ -19,7 +19,7 @@ function swapDict(from, to, what) {
   return { find: `\\{\\s*${pairs}\\s*,?\\s*\\}`, to: "{" + Object.entries(to).map(([k, v]) => `${JSON.stringify(k)}: ${JSON.stringify(v)}`).join(", ") + "}", missing: keep(what) };
 }
 
-const SERVICES = ["Breakfast: the basics", "Lunch: decisions", "Dinner: lists and loops", "Late service: functions and dictionaries"];
+const SERVICES = ["Breakfast: the basics", "Lunch: decisions", "Dinner: lists and loops", "Late service: functions and dictionaries", "Graduation: your own pass"];
 const LEVELS = [
 /* ---------- BREAKFAST ---------- */
 { svc: 0, title: "First Call", concept: "print() and strings",
@@ -515,6 +515,42 @@ print(count_items(["soup", "pie"]))</pre>`,
   tests: [{ expected: "Total: £46" }, { append: "\nprint(ticket_total([\"pie\", \"pie\"]))", expected: "Total: £46\n24", hidden: true, note: "Chef tried a different order: two pies." }],
   requires: [[/def\s+ticket_total/, "keep the ticket_total function"], [/\bfor\b/, "loop over the order with for"], [/\breturn\b/, "return the total"]],
   hints: ["Inside the function: start total at 0, loop over order, return total.", "For each dish, add menu[dish] to total.", "Indents: the loop is inside the function, the add is inside the loop, the return comes after the loop."] },
+
+/* ---------- GRADUATION ---------- */
+{ svc: 4, title: "The Pass Is Yours", concept: "Graduation project: a real program",
+  bark: "No more hand-holding. Build the till for the whole restaurant. Orders in, receipt out. Show me what you've learned.",
+  lesson: `<p>This is a proper little program, the kind you'd write for a real kitchen. It uses <b>everything</b>: a dictionary, a function, a while loop, a list, if/else, try/except and f-strings.</p>
+<p>Plan it in comments first. Then build it one piece at a time and press <b>Send to the pass</b> often. The output tells you how far you've got.</p>
+<pre class="ex"># 1. ask for a dish
+# 2. while it isn't done:
+#      unknown dish?  say so
+#      otherwise ask how many (try/except!)
+#      save [dish, how_many] in the orders list
+#      ask for the next dish
+# 3. print each order and the total</pre>`,
+  notes: `<p>A list can hold other lists. Each order can be a little list of two things, and a for loop can unpack them straight into two names:</p>
+<pre class="ex">orders = []
+orders.append(["soup", 2])
+orders.append(["pie", 1])
+for dish, qty in orders:
+    print(dish, qty)</pre>
+<p>Ask for the next dish at the <b>bottom</b> of the while loop, every time round, or the loop never ends.</p>
+<p><code>dish in menu</code> is True when the dish is one of the menu's keys.</p>`,
+  mistakes: ["Forgetting to ask for the next dish inside the loop, so it goes round forever.", "Asking how many for a dish that isn't on the menu. Check the menu first.", "Putting int() outside the try, so a bad number still crashes.", "Printing each line inside the while loop. The receipt comes at the end."],
+  task: `<p>Build the till. Keep asking <code>input()</code> for a dish until the server types <code>done</code>.</p>
+<ul><li>Dish not on the menu: print <code>Not on the menu: pizza</code> (with the dish's name) and don't ask how many.</li>
+<li>Otherwise ask how many. If it isn't a whole number, print <code>How many? Numbers only</code> and skip that dish.</li>
+<li>When they type done, print one line per order using <code>line_price()</code>, then the total.</li></ul>
+<p>Tonight's orders: soup ×2, pizza, pie × "x", burger ×1. Chef will try other orders too.</p>`,
+  expect: "Not on the menu: pizza\nHow many? Numbers only\n2 x soup = £12\n1 x burger = £14\nTotal: £26",
+  starter: `menu = {"soup": 6, "burger": 14, "pie": 12, "cake": 5}\n\ndef line_price(dish, qty):\n    # hand back the price for qty of this dish\n\n\n# 1. ask for a dish\n# 2. while it isn't "done", handle the order\n# 3. print each order, then the total\n`,
+  tests: [
+    { inputs: ["soup", "2", "pizza", "pie", "x", "burger", "1", "done"], expected: "Not on the menu: pizza\nHow many? Numbers only\n2 x soup = £12\n1 x burger = £14\nTotal: £26" },
+    { inputs: ["cake", "3", "pie", "2", "done"], expected: "3 x cake = £15\n2 x pie = £24\nTotal: £39", hidden: true, note: "Chef rang through a different order: three cakes and two pies." },
+    { inputs: ["done"], expected: "Total: £0", hidden: true, note: "Chef tried a quiet night: nobody ordered anything." },
+    { inputs: ["chips", "soup", "two", "soup", "1", "done"], expected: "Not on the menu: chips\nHow many? Numbers only\n1 x soup = £6\nTotal: £6", hidden: true, note: "Chef tried chips (not on the menu) and typed two in words." }],
+  requires: [[/def\s+line_price/, "keep the line_price function"], [/\breturn\b/, "line_price should return the price"], [/\bwhile\b/, "take the orders with a while loop"], [/\btry\b/, "use try/except for the number"], [/\.append\(/, "keep the orders in a list with .append()"]],
+  hints: ["Start with dish = input(\"Dish: \") and a while dish != \"done\": loop. Ask for the next dish as the last line inside the loop.", "Inside the loop: if dish not in menu: print the message. else: put qty = int(input(\"How many? \")) inside a try, and append [dish, qty] to orders. except ValueError: print the other message.", "After the loop: total = 0, then for dish, qty in orders: work out price = line_price(dish, qty), add it to total and print the line. Finally print the total."] },
 ];
 
 const RECIPES = [
@@ -526,6 +562,27 @@ const RECIPES = [
   { name: "Sizzle Buzz", desc: "The classic % puzzle", inputs: "", code: `# Multiples of 3 say Sizzle, of 5 say Buzz, both say SizzleBuzz\nfor n in range(1, 21):\n    if n % 15 == 0:\n        print("SizzleBuzz")\n    elif n % 3 == 0:\n        print("Sizzle")\n    elif n % 5 == 0:\n        print("Buzz")\n    else:\n        print(n)\n` },
   { name: "Stock checker", desc: "Dictionaries and functions", inputs: "", code: `stock = {"eggs": 30, "milk": 2, "flour": 0, "butter": 5}\n\ndef needs_order(amount):\n    return amount < 5\n\nfor item, amount in stock.items():\n    if needs_order(amount):\n        print(f"ORDER {item} (only {amount} left)")\n    else:\n        print(f"{item} is fine")\n` },
   { name: "Dice roller", desc: "Importing a module", inputs: "", code: `import random\n\nfor roll in range(5):\n    d20 = random.randint(1, 20)\n    if d20 == 20:\n        print(f"{d20}! Critical hit")\n    elif d20 == 1:\n        print(f"{d20}... critical miss")\n    else:\n        print(d20)\n` },
+];
+
+
+/* ---------- recap quizzes: one after each service. a = index of the right answer ---------- */
+const QUIZZES = [
+  [ { q: "What does this print?", code: 'dish = "Soup"\nprint("dish")', o: ["Soup", "dish", "An error"], a: 1, why: "The quote marks make it the word dish. Without quotes, print(dish) would show what's in the tub: Soup." },
+    { q: "What does this print?", code: 'covers = 12\nprint(covers + 3)', o: ["123", "15", "covers + 3"], a: 1, why: "12 is a number, so + adds: 15." },
+    { q: "Which line puts the variable inside the text properly?", o: ['print("Table {table}")', 'print(f"Table {table}")', 'print(f"Table table")'], a: 1, why: "The f before the quotes switches on the {curly brackets}, and the name goes inside them." },
+    { q: "Someone types 4 for input(). What type is it?", code: 'n = input("How many? ")', o: ["A number", "Text (a string)", "It depends"], a: 1, why: "input() always gives you text. Use int() to turn it into a number." } ],
+  [ { q: "Which line checks if two things are equal?", o: ["if dish = \"soup\":", "if dish == \"soup\":", "if dish is equal \"soup\""], a: 1, why: "One = puts something in a tub. Two == compares." },
+    { q: "temp is 3. What prints?", code: 'temp = 3\nif temp > 5:\n    print("Too warm")\nelif temp > 0:\n    print("Fridge fine")\nelse:\n    print("Frozen")', o: ["Too warm", "Fridge fine", "Frozen"], a: 1, why: "Python checks top to bottom and stops at the first True one. 3 > 0 is the first match." },
+    { q: "What's missing at the end of an if line?", o: ["A full stop .", "A colon :", "A semicolon ;"], a: 1, why: "if, elif, else, for, while, def and try lines all end with a colon." },
+    { q: "When is this True?", code: 'vegan and gluten_free', o: ["When either one is True", "Only when both are True", "Never"], a: 1, why: "and needs both sides to be True. or needs just one." } ],
+  [ { q: "What does menu[0] give you?", code: 'menu = ["soup", "pie", "cake"]', o: ['"soup"', '"pie"', "An error"], a: 0, why: "Lists start counting at 0, so [0] is the first item." },
+    { q: "How many times does this print?", code: 'for n in range(3):\n    print("Service!")', o: ["2", "3", "4"], a: 1, why: "range(3) gives 0, 1 and 2: three goes round the loop." },
+    { q: "Which adds pie to the end of the list?", o: ['order.add("pie")', 'order.append("pie")', 'order + "pie"'], a: 1, why: ".append() adds one item to the end of a list." },
+    { q: "Why does this loop never stop?", code: 'left = 5\nwhile left > 0:\n    print(left)', o: ["left never changes", "print is wrong", "5 is too big"], a: 0, why: "Something inside a while loop has to change, like left -= 1, or it goes round forever." } ],
+  [ { q: "What does this print?", code: 'def double(n):\n    return n * 2\n\nprint(double(4))', o: ["4", "8", "double(4)"], a: 1, why: "The function hands back 4 * 2, and print shows it." },
+    { q: "What does prices[\"pie\"] give you?", code: 'prices = {"soup": 6, "pie": 12}', o: ["12", '"pie"', "1"], a: 0, why: "A dictionary looks up the value for a key. The key pie has the value 12." },
+    { q: "What's the difference between print and return in a function?", o: ["No difference", "print shows it on screen, return hands it back to your code", "return shows it on screen twice"], a: 1, why: "return gives the value back so you can store it or use it in sums. print just shows it." },
+    { q: "Someone types four for int(input()). What catches it?", o: ["if / else", "try / except ValueError", "a for loop"], a: 1, why: "int(\"four\") raises a ValueError, and try/except catches it so the program carries on." } ],
 ];
 
 /* ---------- marking ---------- */
@@ -597,7 +654,7 @@ async function judge(level, code, run) {
   return { ok: true, first };
 }
 
-const PK = { SERVICES, LEVELS, RECIPES, judge, scrub, tidy, sortLines };
+const PK = { SERVICES, LEVELS, RECIPES, QUIZZES, judge, scrub, tidy, sortLines };
 if (typeof module !== "undefined" && module.exports) module.exports = PK;
 else root.PK = PK;
 })(typeof window !== "undefined" ? window : globalThis);

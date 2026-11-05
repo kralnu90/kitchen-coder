@@ -212,6 +212,54 @@ footer { font-size: .82rem; color: var(--muted); padding-block: 0 30px; }
   .bubble::after { left: 50%; bottom: -9px; transform: translateX(-50%); border: 6px solid transparent; border-top: 10px solid var(--paper); }
   .lamp:nth-child(3) { display: none; }
 }
+/* ---------- Main menu, quizzes, settings (2.1) ---------- */
+.menubtn { color: var(--lamp-ink) !important; }
+.vinfo { flex: none; width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line); background: var(--paper); color: var(--muted); font-family: var(--body); font-weight: 700; font-size: .85rem; cursor: pointer; padding: 0; }
+.vinfo[aria-expanded="true"] { border-color: var(--lamp); color: var(--lamp-ink); }
+.vtip { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); top: calc(100% + 6px); width: min(340px, calc(100vw - 32px)); background: var(--paper); color: var(--paper-ink); border: 2px solid var(--lamp); border-radius: 10px; padding: 12px 14px; box-shadow: 0 10px 28px rgba(0,0,0,.2); font-size: .92rem; z-index: 25; }
+.vtip p { margin: 0 0 8px; } .vtip p:last-child { margin: 0; }
+.mmenu { position: fixed; inset: 0; z-index: 60; overflow-y: auto; background-color: var(--tile);
+  background-image: linear-gradient(var(--tile-line) 2px, transparent 2px), linear-gradient(90deg, var(--tile-line) 2px, transparent 2px); background-size: 56px 28px;
+  padding: calc(env(safe-area-inset-top, 0px) + 18px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 28px) max(16px, env(safe-area-inset-left, 0px)); }
+.mm-in { max-width: 560px; margin: 0 auto; display: grid; gap: 12px; }
+.mm-title { font-family: var(--display); font-weight: 900; font-size: clamp(2.6rem, 11vw, 4rem); line-height: .88; text-transform: uppercase; background: var(--paper); color: var(--paper-ink); padding: 10px 14px 12px; justify-self: start; box-shadow: 0 3px 0 var(--line); margin: 0; }
+.mm-title span { color: var(--lamp); }
+.mm-sub { margin: 0; background: var(--paper); color: var(--paper-ink); padding: 8px 12px; border-left: 4px solid var(--lamp); justify-self: start; }
+.mm-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.mm-head h2 { font-family: var(--display); font-weight: 900; font-size: 2rem; text-transform: uppercase; margin: 0; background: var(--paper); color: var(--paper-ink); padding: 4px 10px; }
+.mm-big { display: grid; gap: 2px; text-align: left; width: 100%; padding: 14px 16px; border-radius: 6px; border: 0; background: var(--lamp-btn); color: var(--on-lamp); cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,.18); }
+.mm-big b { font-family: var(--display); font-size: 1.8rem; text-transform: uppercase; line-height: 1; }
+.mm-big span { font-size: .95rem; opacity: .95; }
+.mm-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.mm-item { display: grid; gap: 2px; align-content: start; text-align: left; padding: 12px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--paper); color: var(--paper-ink); cursor: pointer; text-decoration: none; min-height: 74px; }
+.mm-item b { font-family: var(--display); font-size: 1.25rem; text-transform: uppercase; line-height: 1.05; }
+.mm-item span { font-size: .85rem; color: var(--muted); line-height: 1.35; }
+.mm-item:hover { border-color: var(--lamp); }
+.mm-foot { margin: 6px 0 0; font-size: .82rem; color: var(--muted); background: var(--paper); padding: 8px 12px; border-radius: 4px; }
+.mm-card { background: var(--paper); color: var(--paper-ink); border-radius: 6px; padding: 16px; display: grid; gap: 10px; }
+.mm-card p { margin: 0; }
+.mm-card h3 { margin: 0; font-family: var(--display); font-size: 1.35rem; text-transform: uppercase; }
+.toggle { display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; text-align: left; background: none; border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; color: inherit; cursor: pointer; }
+.toggle i { flex: none; width: 46px; height: 26px; border-radius: 13px; background: var(--steel-lo); position: relative; }
+.toggle i::after { content: ""; position: absolute; left: 3px; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform .15s; }
+.toggle[aria-pressed="true"] i { background: var(--lamp-btn); } .toggle[aria-pressed="true"] i::after { transform: translateX(20px); }
+.toggle small { display: block; color: var(--muted); }
+.stars { display: flex; gap: 6px; } .star { font-size: 2rem; line-height: 1; background: none; border: 0; color: var(--steel-lo); cursor: pointer; padding: 2px; } .star.on { color: var(--lamp); }
+.rv { width: 100%; min-height: 90px; font: inherit; font-size: 16px; padding: 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--fg); }
+.qz-code { font-family: var(--mono); font-size: .88rem; background: var(--code-bg); color: var(--code-fg); padding: 10px 12px; border-radius: 6px; white-space: pre; overflow-x: auto; margin: 0; }
+.qz-opts { display: grid; gap: 8px; }
+.qz-opt { text-align: left; font-family: var(--mono); font-size: .95rem; padding: 12px 14px; border-radius: 6px; border: 2px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; }
+.qz-opt.right { border-color: var(--ok); background: var(--ok-soft); } .qz-opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.qz-why { border-left: 4px solid var(--lamp); padding: 6px 10px; background: var(--lamp-soft); color: var(--fg); }
+.qz-dots { display: flex; gap: 6px; } .qz-dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--steel-lo); } .qz-dots i.ok { background: var(--ok); } .qz-dots i.no { background: var(--bad); } .qz-dots i.now { background: var(--lamp); }
+.qz-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+/* the guided first ticket */
+.spot { position: relative; z-index: 41 !important; box-shadow: 0 0 0 4px var(--lamp), 0 0 0 100vmax rgba(10,14,18,.5) !important; border-radius: 6px; }
+.coachbox { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); transform: translateX(-50%); width: min(460px, calc(100% - 24px)); z-index: 50; background: var(--paper); color: var(--paper-ink); border: 3px solid var(--paper-ink); border-radius: 16px; padding: 14px 16px; box-shadow: 0 12px 30px rgba(0,0,0,.3); display: grid; gap: 10px; }
+.coachbox small { font-size: .72rem; letter-spacing: .1em; color: var(--lamp-ink); text-transform: uppercase; font-weight: 700; }
+.coachbox p { margin: 0; font-family: var(--display); font-weight: 700; font-size: 1.3rem; line-height: 1.15; }
+.coach-acts { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+@media (max-width: 420px) { .mm-grid { grid-template-columns: minmax(0, 1fr); } .mm-item { min-height: 0; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
@@ -285,12 +333,18 @@ footer { font-size: .82rem; color: var(--muted); padding-block: 0 30px; }
 
 <div class="nav">
   <div class="inner gutter-x">
+    <button class="navbtn menubtn" id="menuBtn" type="button">☰ Menu</button>
     <button class="navbtn" data-view="tickets" aria-current="page">Tickets</button>
     <button class="navbtn" data-view="practice">Practice station</button>
     <button class="navbtn" data-view="cookbook">Cookbook</button>
     <button class="navbtn" data-view="office">Office</button>
     <button class="navbtn" data-install type="button">Install app</button>
-    <button class="voice" id="voice" aria-pressed="true">Chef's voice: on</button>
+    <button class="voice" id="voice" aria-pressed="false">Chef's voice: off</button>
+    <button class="vinfo" id="voiceInfo" type="button" aria-expanded="false" aria-controls="voiceTip" aria-label="What is Chef's voice?">i</button>
+  </div>
+  <div class="vtip" id="voiceTip" role="note" hidden>
+    <p><b>Chef's voice</b> reads his lines out loud using your device's built-in text-to-speech, so it can sound robotic.</p>
+    <p>It's off by default, and we recommend leaving it off. Everything Chef says always appears in his speech bubble.</p>
   </div>
 </div>
 
@@ -366,21 +420,15 @@ footer { font-size: .82rem; color: var(--muted); padding-block: 0 30px; }
       <p class="office-msg" id="restoreMsg" role="status"></p>
     </section>
     <section class="panel">
-      <h2>Chef's voice</h2>
-      <p>Pick the voice that sounds best on this device.</p>
-      <div class="voice-row"><label class="sr" for="voiceSel">Voice</label><select id="voiceSel"></select><button class="btn" type="button" id="voiceTry">Try it</button></div>
-      <details class="voice-help"><summary>Make chef sound more natural</summary>
-        <p>The voice comes from your device, and most devices can download better ones for free.</p>
-        <p><b>Android:</b> Settings, search for <b>Text-to-speech</b>, choose <b>Speech Services by Google</b>, tap the gear, then <b>Install voice data</b> and pick an English (United Kingdom) voice.</p>
-        <p><b>iPhone and iPad:</b> Settings, Accessibility, Spoken Content, Voices, English, then download a voice marked <b>Enhanced</b> or <b>Premium</b>.</p>
-        <p>Reload the game afterwards and choose the new voice above.</p>
-      </details>
-    </section>
-    <section class="panel">
       <h2>Tell Kris what you think</h2>
       <p>Found a bug, got stuck on a ticket, or loved it? Kris reads every message.</p>
       <p><a class="btn primary" href="mailto:hello@kralnugames.com?subject=Python%20Kitchen%20feedback">Email feedback</a></p>
       <p class="status">Or send it to <b class="sel">hello@kralnugames.com</b></p>
+    </section>
+    <section class="panel">
+      <h2>Settings</h2>
+      <p>Chef's voice, and picking which voice he uses, live in Settings on the main menu.</p>
+      <div><button class="btn" type="button" id="toSettings">Open settings</button></div>
     </section>
     <section class="panel">
       <h2>Start again</h2>
@@ -390,6 +438,10 @@ footer { font-size: .82rem; color: var(--muted); padding-block: 0 30px; }
     </section>
   </div>
 </main>
+
+<!-- ================= MAIN MENU, QUIZZES, SETTINGS (filled in by script) ================= -->
+<div class="mmenu" id="mmenu" role="dialog" aria-modal="true" aria-label="Python Kitchen menu" hidden><div class="mm-in" id="mmBody"></div></div>
+<div class="coachbox" id="coach" role="dialog" aria-live="polite" aria-label="Your first ticket" hidden><small>Your first ticket</small><p id="coachText"></p><div class="coach-acts" id="coachActs"></div></div>
 
 <!-- ================= COOKBOOK ================= -->
 <main class="view" id="view-cookbook" hidden>
@@ -610,10 +662,13 @@ const RULE = ["Right answer, wrong method! Do it how I showed you.", "It looks r
 const HINT = ["Fine. Listen closely.", "One tip. Don't make me say it twice.", "Here. And then crack on."];
 const pick = a => a[Math.floor(Math.random() * a.length)];
 
-const RANKS = [[0, "Kitchen Porter"], [4, "Commis Chef"], [8, "Chef de Partie"], [14, "Sous Chef"], [19, "Senior Sous"], [24, "Head Chef"]];
+const RANKS = [[0, "Kitchen Porter"], [4, "Commis Chef"], [8, "Chef de Partie"], [14, "Sous Chef"], [19, "Senior Sous"], [24, "Head Chef"], [25, "Chef Patron"]];
 const KEY = "python-kitchen-v2";
-let state = { done: [], code: {}, current: 0, hints: {}, practice: null, practiceInputs: "", voice: true, voiceName: "" };
+let state = { done: [], code: {}, current: 0, hints: {}, practice: null, practiceInputs: "", voice: false, voiceName: "", quiz: {}, guided: false };
 try { const s = JSON.parse(localStorage.getItem(KEY)); if (s) state = Object.assign(state, s); } catch (e) {}
+// 2.1: Chef's voice is off by default (it's device text-to-speech and can sound robotic). Switch it off once for everyone.
+if (!state.voiceOff21) { state.voice = false; state.voiceOff21 = 1; if (state.done.length) state.guided = true; }
+state.quiz = state.quiz || {};
 function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
 
 const $ = id => document.getElementById(id);
@@ -862,12 +917,26 @@ async function runTicket() {
   if (v.ok) {
     if (!state.done.includes(i)) state.done.push(i);
     save(); renderRail(); renderTicket();
-    const last = i === LEVELS.length - 1;
+    const last = i === LEVELS.length - 1, svcEnd = !last && LEVELS[i + 1].svc !== l.svc, qz = svcEnd && PK.QUIZZES[l.svc] && state.quiz[l.svc] == null;
+    if (last) { box.innerHTML = `<div class="verdict ok" role="status"><strong>You've graduated, Chef Patron!</strong>
+      <div>You built a real program from nothing: a dictionary, a function, a while loop, a list, if/else, try/except and f-strings, all working together. That's genuinely what programmers do. The Cookbook's last page shows you how to keep going on your own computer.</div>
+      <div><button class="btn primary" id="toMenuEnd">Back to the menu</button></div></div>`;
+      $("toMenuEnd").addEventListener("click", () => openMenu("home"));
+      say("Chef Patron. Your own pass. I've got nothing left to teach you. Go and build something.", "happy");
+      coachAfterWin(); btn.dataset.busy = ""; btn.disabled = ENGINE.status !== "ready"; btn.textContent = "Send to the pass"; return; }
+    if (qz) { box.innerHTML = `<div class="verdict ok" role="status"><strong>${esc(SERVICES[l.svc].split(":")[0])} service done!</strong>
+      <div>Quick recap before the next service? Four questions, no pressure, and nothing is locked behind it.</div>
+      <div><button class="btn primary" id="takeQuiz">Take the recap quiz</button> <button class="btn" id="next">${LEVELS[i + 1].svc === 4 ? "Straight to graduation →" : "Next ticket →"}</button></div></div>`;
+      $("takeQuiz").addEventListener("click", () => openQuiz(l.svc));
+      $("next").addEventListener("click", () => { loadLevel(i + 1); window.scrollTo({ top: 0, behavior: smooth() }); });
+      say("Service done! Quick recap, then we go again.", "happy");
+      coachAfterWin(); btn.dataset.busy = ""; btn.disabled = ENGINE.status !== "ready"; btn.textContent = "Send to the pass"; return; }
     box.innerHTML = `<div class="verdict ok" role="status"><strong>${last ? "Service complete, Head Chef!" : "Service! Ticket cleared."}</strong>
       <div>${last ? "You've written decisions, loops, lists, dictionaries, functions and error handling in real Python. Next step: the same thing in .py files on your own machine. The Cookbook's last page shows you how." : "The next ticket is on the rail."}</div>
       ${last ? "" : `<div><button class="btn primary" id="next">Next ticket →</button></div>`}</div>`;
     const nb = $("next"); if (nb) nb.addEventListener("click", () => { loadLevel(i + 1); window.scrollTo({ top: 0, behavior: smooth() }); });
-    say(last ? "That's the end of service. Head Chef. Proud of you. Now go and write it for real." : pick(WIN), "happy");
+    say(LEVELS[i + 1] && LEVELS[i + 1].svc === 4 ? "That's the end of service. Head Chef! One last thing: graduation. Build me a till." : pick(WIN), "happy");
+    coachAfterWin();
   } else if (v.type === "error") {
     $("consoleT").innerHTML += `${$("consoleT").textContent ? "\n" : ""}<span class="er">${esc(rawError(v.r.error))}</span>`;
     const hid = v.t && v.t.hidden ? `<div class="status">${esc(v.t.note || "That happened during one of chef's own taste tests.")}</div>` : "";
@@ -924,6 +993,7 @@ function show(name, speak) {
   document.querySelectorAll(".navbtn[data-view]").forEach(b => b.setAttribute("aria-current", b.dataset.view === name ? "page" : "false"));
   if (location.hash.slice(1) !== name) { try { history.replaceState(null, "", "#" + name); } catch (e) {} }
   if (name === "office") renderOffice();
+  if (name !== "tickets") hideCoach(); else if ($("mmenu").hidden) setTimeout(maybeCoach, 0);
   if (speak) say(name === "tickets" ? LEVELS[state.current].bark : VIEW_LINES[name], name === "tickets" ? "angry" : "happy");
 }
 document.querySelectorAll(".navbtn[data-view]").forEach(b => b.addEventListener("click", () => show(b.dataset.view, true)));
@@ -1003,8 +1073,152 @@ $("resetAll").addEventListener("click", () => {
   loadLevel(0, false); renderOffice(); officeMsg("resetMsg", "Fresh start. Your practice station code is still there.", true);
   say("New starter? Whites on. Ticket one's on the rail.");
 });
-$("voiceSel").addEventListener("change", e => { state.voiceName = e.target.value; save(); say("This is how I'll sound. Got it?", "angry", true); });
-$("voiceTry").addEventListener("click", () => say("Yes, Chef! That's what I want to hear.", "happy", true));
+$("toSettings").addEventListener("click", () => openMenu("settings"));
+
+
+/* =================== MAIN MENU, SETTINGS, REVIEW, QUIZZES (2.1) =================== */
+const KOFI = "https://ko-fi.com/kralnu90";
+const CREDIT = "Ideas, design and testing by Kris. Built with Claude, an AI by Anthropic.";
+let mmScreen = null;
+function rankNow() { let r = RANKS[0][1]; for (const [need, name] of RANKS) if (state.done.length >= need) r = name; return r; }
+function quizzesOpen() { return PK.QUIZZES.map((_, k) => LEVELS.every((l, i) => l.svc !== k || state.done.includes(i))); }
+function closeMenu(to) { $("mmenu").hidden = true; mmScreen = null; document.body.style.overflow = ""; if (to) show(to, true); maybeCoach(); }
+function openMenu(screen, arg) {
+  mmScreen = screen; const m = $("mmenu"), b = $("mmBody"); m.hidden = false; document.body.style.overflow = "hidden"; m.scrollTop = 0; hideCoach();
+  const head = t => `<div class="mm-head"><h2>${t}</h2><button class="btn" type="button" id="mmBack">Back</button></div>`;
+  if (screen === "home") {
+    const n = state.done.length, all = n >= LEVELS.length, cur = LEVELS[state.current], qOpen = quizzesOpen(), qDone = Object.keys(state.quiz).length;
+    b.innerHTML = `<h1 class="mm-title">Python <span>Kitchen</span></h1>
+      <p class="mm-sub">Learn real Python, one ticket at a time. ${n ? `<b>${esc(rankNow())}</b> · ${n} of ${LEVELS.length} tickets cleared.` : "No experience needed."}</p>
+      <button class="mm-big" type="button" id="mmGo"><b>${all ? "Back to the pass" : n ? "Carry on" : "Start cooking"}</b><span>${all ? "Every ticket cleared. Replay any of them." : `Ticket ${state.current + 1}: ${esc(cur.title)} · ${esc(cur.concept)}`}</span></button>
+      <div class="mm-grid">
+        <button class="mm-item" type="button" data-go="practice"><b>Practice station</b><span>Write anything and run it. Nothing is marked.</span></button>
+        <button class="mm-item" type="button" data-go="cookbook"><b>Cookbook</b><span>The whole course on one shelf.</span></button>
+        <button class="mm-item" type="button" data-mm="quizzes"><b>Recap quizzes</b><span>${qOpen.some(Boolean) ? `${qDone} of ${PK.QUIZZES.length} taken` : "Unlock one by finishing a service"}</span></button>
+        <button class="mm-item" type="button" data-go="office"><b>Office</b><span>Your progress, backups and starting again.</span></button>
+        <button class="mm-item" type="button" data-mm="settings"><b>Settings</b><span>Chef's voice: ${state.voice ? "on" : "off"}.</span></button>
+        <button class="mm-item" type="button" data-mm="review"><b>Leave a review</b><span>Tell Kris what you think. He reads every one.</span></button>
+        <a class="mm-item" href="${KOFI}" target="_blank" rel="noopener"><b>☕ Support</b><span>It's free and staying free. Ko-fi helps.</span></a>
+        <button class="mm-item" type="button" data-install><b>Install app</b><span>Keep it on your home screen. Works offline.</span></button>
+        <a class="mm-item" href="https://kralnugames.com/learn/" target="_blank" rel="noopener"><b>More games</b><span>Garage Code and the rest of Kralnu Games.</span></a>
+      </div>
+      <p class="mm-foot">${esc(CREDIT)}<br>Real Python 3 runs right here in your browser. © 2026 Kralnu Games.</p>`;
+    $("mmGo").addEventListener("click", () => closeMenu("tickets"));
+    b.querySelectorAll("[data-go]").forEach(x => x.addEventListener("click", () => closeMenu(x.dataset.go)));
+    b.querySelectorAll("[data-mm]").forEach(x => x.addEventListener("click", () => openMenu(x.dataset.mm)));
+    return;
+  }
+  if (screen === "settings") {
+    b.innerHTML = head("Settings") + `<div class="mm-card"><h3>Chef's voice</h3>
+      <button class="toggle" type="button" id="stVoice" aria-pressed="${state.voice}"><span><b>Read Chef's lines out loud</b><small>Uses your device's text-to-speech</small></span><i></i></button>
+      <p>Chef's voice comes from your device's built-in text-to-speech, so it can sound robotic. It's off by default, and <b>we recommend leaving it off</b>. Everything he says always appears in his speech bubble.</p>
+      <div id="stVoiceMore" ${state.voice ? "" : "hidden"}>
+        <p>Pick the voice that sounds best on this device.</p>
+        <div class="voice-row"><label class="sr" for="voiceSel">Voice</label><select id="voiceSel"></select><button class="btn" type="button" id="voiceTry">Try it</button></div>
+        <details class="voice-help"><summary>Make Chef sound more natural</summary>
+          <p>Most devices can download better voices for free.</p>
+          <p><b>Android:</b> Settings, search for <b>Text-to-speech</b>, choose <b>Speech Services by Google</b>, tap the gear, then <b>Install voice data</b> and pick an English (United Kingdom) voice.</p>
+          <p><b>iPhone and iPad:</b> Settings, Accessibility, Spoken Content, Voices, English, then download a voice marked <b>Enhanced</b> or <b>Premium</b>.</p>
+          <p>Reload the game afterwards and choose the new voice above.</p></details>
+      </div></div>
+      <div class="mm-card"><h3>Your first ticket walkthrough</h3><p>Want the quick tour of how a ticket works again?</p><div><button class="btn" type="button" id="stTour">Show me again</button></div></div>`;
+    $("mmBack").addEventListener("click", () => openMenu("home"));
+    $("stVoice").addEventListener("click", () => { setVoice(!state.voice); $("stVoice").setAttribute("aria-pressed", state.voice); $("stVoiceMore").hidden = !state.voice; fillVoices(); });
+    $("voiceSel").addEventListener("change", e => { state.voiceName = e.target.value; save(); say("This is how I'll sound. Got it?", "angry", true); });
+    $("voiceTry").addEventListener("click", () => say("Yes, Chef! That's what I want to hear.", "happy", true));
+    $("stTour").addEventListener("click", () => { state.guided = false; save(); closeMenu(); show("tickets"); loadLevel(0, false); startCoach(true); });
+    fillVoices();
+    return;
+  }
+  if (screen === "review") {
+    let stars = 0;
+    b.innerHTML = head("Leave a review") + `<div class="mm-card"><p>Your review goes straight to Kris, the developer, by email. Only the stars are needed.</p>
+      <div class="stars" role="radiogroup" aria-label="Your rating">${[1, 2, 3, 4, 5].map(n => `<button type="button" class="star" data-n="${n}" role="radio" aria-checked="false" aria-label="${n} star${n > 1 ? "s" : ""}">★</button>`).join("")}</div>
+      <label class="label" for="rvText">Anything you'd like to say? (optional)</label><textarea class="rv" id="rvText" maxlength="1200" placeholder="What did you enjoy? Where did you get stuck?"></textarea>
+      <div><button class="btn primary" type="button" id="rvSend" disabled>Send review</button></div><p class="status" id="rvMsg">It opens your email app with the review filled in, ready to send.</p></div>`;
+    $("mmBack").addEventListener("click", () => openMenu("home"));
+    b.querySelectorAll(".star").forEach(x => x.addEventListener("click", () => { stars = +x.dataset.n; b.querySelectorAll(".star").forEach(y => { const on = +y.dataset.n <= stars; y.classList.toggle("on", on); y.setAttribute("aria-checked", String(+y.dataset.n === stars)); }); $("rvSend").disabled = false; }));
+    $("rvSend").addEventListener("click", () => {
+      const body = `Rating: ${"★".repeat(stars)}${"☆".repeat(5 - stars)} (${stars}/5)\nProgress: ${state.done.length} of ${LEVELS.length} tickets, ${rankNow()}\n\n${$("rvText").value.trim()}`;
+      location.href = `mailto:hello@kralnugames.com?subject=${encodeURIComponent(`Python Kitchen review: ${stars}/5`)}&body=${encodeURIComponent(body)}`;
+      $("rvMsg").textContent = "Thank you! If your email app didn't open, send it to hello@kralnugames.com.";
+    });
+    return;
+  }
+  if (screen === "quizzes") {
+    const open = quizzesOpen();
+    b.innerHTML = head("Recap quizzes") + `<div class="mm-card"><p>Four quick questions after each service, to lock in what you've learned. Nothing is locked behind them, and you can retake them any time.</p></div>` +
+      PK.QUIZZES.map((qz, k) => `<button class="mm-item" type="button" data-qz="${k}" ${open[k] ? "" : "disabled"}><b>${esc(SERVICES[k].split(":")[0])}</b><span>${esc(SERVICES[k].split(": ")[1] || "")} · ${open[k] ? (state.quiz[k] != null ? `Best: ${state.quiz[k]} of ${qz.length}` : `${qz.length} questions`) : "Finish the service to unlock"}</span></button>`).join("");
+    $("mmBack").addEventListener("click", () => openMenu("home"));
+    b.querySelectorAll("[data-qz]").forEach(x => x.addEventListener("click", () => openQuiz(+x.dataset.qz)));
+    return;
+  }
+}
+function openQuiz(k) {
+  const qz = PK.QUIZZES[k], res = [];
+  openMenu("quiz");
+  const b = $("mmBody");
+  const step = j => {
+    if (j >= qz.length) {
+      const sc = res.filter(Boolean).length; state.quiz[k] = Math.max(state.quiz[k] ?? 0, sc); save();
+      b.innerHTML = `<div class="mm-head"><h2>Recap done</h2></div><div class="mm-card"><h3>${sc} of ${qz.length}${sc === qz.length ? " · perfect!" : ""}</h3>
+        <p>${sc === qz.length ? "Every one right. That service is locked in." : sc >= qz.length / 2 ? "Solid. Have a look back at the Cookbook for the ones you missed." : "No harm done. The Cookbook covers all of these, and you can retake this any time."}</p>
+        <div class="qz-row"><button class="btn" type="button" id="qzAgain">Try again</button><button class="btn primary" type="button" id="qzOut">Back to the kitchen</button></div></div>`;
+      $("qzAgain").addEventListener("click", () => openQuiz(k));
+      $("qzOut").addEventListener("click", () => closeMenu("tickets"));
+      say(sc === qz.length ? "Perfect! Now that's a chef who listens." : "Good. Now back on the line.", "happy");
+      return;
+    }
+    const q = qz[j];
+    b.innerHTML = `<div class="mm-head"><h2>${esc(SERVICES[k].split(":")[0])} recap</h2><button class="btn" type="button" id="mmBack">Close</button></div>
+      <div class="mm-card"><div class="qz-row"><span class="label">Question ${j + 1} of ${qz.length}</span><span class="qz-dots">${qz.map((_, n) => `<i class="${n < j ? (res[n] ? "ok" : "no") : n === j ? "now" : ""}"></i>`).join("")}</span></div>
+      <h3>${esc(q.q)}</h3>${q.code ? `<pre class="qz-code">${esc(q.code)}</pre>` : ""}
+      <div class="qz-opts">${q.o.map((o, n) => `<button class="qz-opt" type="button" data-o="${n}">${esc(o)}</button>`).join("")}</div>
+      <div id="qzAfter"></div></div>`;
+    $("mmBack").addEventListener("click", () => closeMenu());
+    b.querySelectorAll(".qz-opt").forEach(x => x.addEventListener("click", () => {
+      if (res[j] != null) return; const n = +x.dataset.o, ok = n === q.a; res[j] = ok;
+      b.querySelectorAll(".qz-opt").forEach(y => { y.disabled = true; if (+y.dataset.o === q.a) y.classList.add("right"); });
+      if (!ok) x.classList.add("wrong");
+      $("qzAfter").innerHTML = `<p class="qz-why"><b>${ok ? "Yes, Chef!" : "Not quite."}</b> ${esc(q.why)}</p><div class="qz-row"><span></span><button class="btn primary" type="button" id="qzNext">${j + 1 < qz.length ? "Next question" : "See my score"}</button></div>`;
+      $("qzNext").addEventListener("click", () => step(j + 1)); $("qzNext").focus();
+    }));
+  };
+  step(0);
+}
+function setVoice(on) { state.voice = on; save(); renderVoice(); if (!on) { try { speechSynthesis.cancel(); } catch (e) {} } else say("Right, I'm back. Listen up!"); }
+$("menuBtn").addEventListener("click", () => openMenu("home"));
+$("voiceInfo").addEventListener("click", () => { const t = $("voiceTip"), open = t.hidden; t.hidden = !open; $("voiceInfo").setAttribute("aria-expanded", String(open)); });
+document.addEventListener("click", e => { const t = $("voiceTip"); if (!t.hidden && !e.target.closest("#voiceTip") && !e.target.closest("#voiceInfo")) { t.hidden = true; $("voiceInfo").setAttribute("aria-expanded", "false"); } });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { if (!$("voiceTip").hidden) { $("voiceTip").hidden = true; $("voiceInfo").setAttribute("aria-expanded", "false"); } else if (!$("mmenu").hidden && mmScreen !== "home") openMenu("home"); } });
+
+/* =================== THE GUIDED FIRST TICKET (2.1) =================== */
+/* A quick tour of ticket 1 for brand-new players: the order, the stove, the pass. About a minute, very little reading. */
+let coachStep = -1, coachSpot = null;
+function spot(el) { if (coachSpot) coachSpot.classList.remove("spot"); coachSpot = el || null; if (el) { el.classList.add("spot"); el.scrollIntoView({ behavior: smooth(), block: "center" }); } }
+function hideCoach() { $("coach").hidden = true; spot(null); }
+function endCoach() { state.guided = true; save(); coachStep = -1; hideCoach(); }
+function coachShow(text, acts) {
+  $("coachText").textContent = text; const a = $("coachActs"); a.innerHTML = "";
+  for (const [label, fn, primary] of acts) { const x = document.createElement("button"); x.type = "button"; x.className = "btn" + (primary ? " primary" : ""); x.textContent = label; x.addEventListener("click", fn); a.appendChild(x); }
+  $("coach").hidden = false;
+}
+function coachGo(n) {
+  coachStep = n;
+  if (n === 0) { spot($("ticket").querySelector(".expect")); coachShow("This is the order. Chef wants exactly this printed out.", [["Skip the tour", endCoach], ["Next", () => coachGo(1), true]]); }
+  else if (n === 1) { spot(document.querySelector("#stoveT .editor-wrap")); coachShow("This is your stove. Your code goes in here. Want me to type the first one?", [["I'll type it", () => coachGo(2)], ["Type it for me", () => { typeFirst(); }, true]]); }
+  else if (n === 2) { spot($("runT")); coachShow("Now send it to the pass, and chef checks it.", [["Skip the tour", endCoach]]); }
+  else if (n === 3) { spot($("rail")); coachShow("Service! Every ticket works like that: read the order, write the code, send it. Stuck? Ask chef for a hint.", [["Let's cook", endCoach, true]]); }
+}
+function typeFirst() {
+  const ta = editors.T.ta, text = 'print("Yes, Chef!")', base = ta.value.replace(/\s*$/, "\n");
+  let k = 0; ta.focus({ preventScroll: true });
+  const tick = () => { k++; editors.T.set(base + text.slice(0, k)); state.code[0] = ta.value; save(); if (k < text.length) setTimeout(tick, matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 45); else coachGo(2); };
+  tick();
+}
+function startCoach(force) { if (!force && (state.guided || state.done.length || state.current !== 0)) return; if (!$("mmenu").hidden) return; coachGo(0); }
+function maybeCoach() { if (coachStep >= 0) { coachGo(coachStep); return; } if (!state.guided && !state.done.length && state.current === 0 && !$("view-tickets").hidden) startCoach(); }
+function coachAfterWin() { if (coachStep >= 0 && coachStep < 3 && state.current === 0) coachGo(3); }
 
 /* =================== BOOT =================== */
 editors.T = makeEditor($("codeT"), $("gutT"), v => { state.code[state.current] = v; save(); }, runTicket);
@@ -1019,7 +1233,9 @@ if (state.current >= LEVELS.length || !unlocked(state.current)) state.current = 
 loadLevel(state.current, false);
 $("toTicket").addEventListener("click", () => $("ticket").scrollIntoView({ behavior: smooth(), block: "start" }));
 bubbleText.textContent = state.done.length ? `Back on the line. ${LEVELS[state.current].bark}` : "Right. New starter. Whites on, ears open. First ticket's on the rail. Tap a ticket to hear me call it!";
-show(location.hash.slice(1) || "tickets");
+const linked = ["practice", "cookbook", "office"].includes(location.hash.slice(1)) ? location.hash.slice(1) : "";
+show(linked || "tickets");
+if (!linked) openMenu("home"); else maybeCoach();
 </script>
 <script>
 if ("serviceWorker" in navigator) { window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); }); }

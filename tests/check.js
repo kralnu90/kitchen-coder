@@ -38,6 +38,10 @@ function run(code, inputs) {
     const sv = await PK.judge(level, level.starter, run);
     if (sv.ok) { failures++; console.log(`FAIL ${name}: the untouched starter code passes`); }
   }
+  // every service has a recap quiz with sensible answers
+  checks++;
+  if (!Array.isArray(PK.QUIZZES) || PK.QUIZZES.length < PK.SERVICES.length - 1) { failures++; console.log("FAIL quizzes: one per service needed"); }
+  else PK.QUIZZES.forEach((qz, k) => qz.forEach((q, j) => { if (!q.q || !Array.isArray(q.o) || q.o.length < 2 || !(q.a >= 0 && q.a < q.o.length) || !q.why) { failures++; console.log(`FAIL quiz ${k + 1} question ${j + 1}`); } }));
   // the harness reports errors with the learner's line number
   const e = await run("x = 1\nprint(y)", []);
   checks++; if (!e.error || e.error.type !== "NameError" || e.error.line !== 2) { failures++; console.log("FAIL harness: NameError line number", e.error); }
