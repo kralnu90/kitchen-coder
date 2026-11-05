@@ -8,6 +8,11 @@ Upload this file at the start of a new session so Claude can pick up where we le
 - Made installable (manifest + service worker + icons) and offline-capable.
 - Progress is saved in localStorage under the key `python-kitchen-v2`.
 
+## Pro upgrade (started 5 Nov 2026)
+
+- Full audit written up in `AUDIT.md`: all 24 tickets verified against real CPython, plus a prioritised list of bugs and polish.
+- Next: automated ticket tests, then the bug fixes in the audit.
+
 ## Known issues
 
 - Chef's voice didn't play when tested inside the Claude artifact viewer. It may work on GitHub Pages, since the page isn't sandboxed there. If it still doesn't, check whether the device has a text-to-speech voice installed, and look at how `say()` picks a voice.
