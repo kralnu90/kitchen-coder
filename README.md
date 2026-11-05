@@ -16,6 +16,9 @@ A [Kralnu Games](https://kralnugames.com) project.
   - **Graduation:** build a till that takes orders until the server types done, using everything from the course
 - **Main menu** with carry on, the practice station, cookbook, recap quizzes, office, settings, a review form, Ko-fi and install.
 - **Guided first ticket.** A one-minute tour of ticket 1 for brand-new players: the order, the stove and the pass. Chef can even type the first answer for you.
+- **A pass that fills up.** Every ticket you clear adds a piece of kit to the pass: a chopping board, condiments, pots and pans, plates, a service bell. By graduation it's a busy working pass with your certificate on the wall. The stockpot steams while your code runs, the bell rings when a ticket clears and a pan clatters on an error.
+- **Recipe binder.** A short page on each new idea pops up before the ticket that first uses it, with an example to try. They're all collected in the binder on the menu.
+- **Chef's specials.** Graduates can write their own tickets. The game cooks your answer to work out the exact output, keeps your answer secret, and gives you a link to send a friend. Anyone can cook a special, even before they've finished the course.
 - **Recap quizzes.** Four quick questions after each service, with an explanation for every answer. Nothing is locked behind them.
 - **Fair checking.** Tickets are tested with several inputs, and chef runs hidden taste tests with different data, so typing out the answer won't pass. Technique checks ignore comments and text inside strings.
 - **Hints, not answers.** Up to three hints per ticket, one at a time. When you're wrong, you see what chef wanted next to what you printed.
@@ -27,6 +30,11 @@ A [Kralnu Games](https://kralnugames.com) project.
 - **Installable.** Add it to your home screen and it works offline after the first visit.
 
 ## Changelog
+
+### 2.2 · 5 November 2026
+- **The pass fills up as you learn.** 25 pieces of kit, one per cleared ticket, plus a Chef Patron certificate on the wall when you graduate. The pot steams while your code cooks, the bell rings on a clear and a pan clatters on an error.
+- **Recipe binder.** A one-page card before each new idea (22 of them), collected in a binder on the menu, each with a Try it button.
+- **Chef's specials.** Write your own tickets after graduating and share them with a link or a PKS1. code. Friends can cook them whether or not they've finished the course.
 
 ### 2.1 · 5 November 2026
 - **Main menu** on launch, with everything in one place: carry on, practice station, cookbook, recap quizzes, office, settings, leave a review, support on Ko-fi, install and more games.

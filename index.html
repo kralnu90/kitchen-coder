@@ -259,6 +259,34 @@ footer { font-size: .82rem; color: var(--muted); padding-block: 0 30px; }
 .coachbox small { font-size: .72rem; letter-spacing: .1em; color: var(--lamp-ink); text-transform: uppercase; font-weight: 700; }
 .coachbox p { margin: 0; font-family: var(--display); font-weight: 700; font-size: 1.3rem; line-height: 1.15; }
 .coach-acts { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+/* the pass fills up (2.2) */
+.counter { position: absolute; left: 0; right: 0; bottom: 100%; height: 0; pointer-events: none; z-index: 4; max-width: 1240px; margin: 0 auto; }
+.kit { position: absolute; bottom: -3px; transform: translateX(-50%) scale(.001); transform-origin: 50% 100%; opacity: 0; }
+.kit.r0 { bottom: 4px; } .kit.r0 svg { filter: brightness(.94); }
+.kit.on { transform: translateX(-50%); opacity: 1; }
+.kit.pop { animation: kitpop .55s cubic-bezier(.3,1.6,.5,1); }
+@keyframes kitpop { 0% { transform: translateX(-50%) scale(.2) translateY(-30px); opacity: 0; } 100% { transform: translateX(-50%) scale(1); opacity: 1; } }
+.kit svg { display: block; overflow: visible; filter: drop-shadow(0 2px 1px rgba(0,0,0,.18)); }
+.kit .steam { opacity: 0; } .cooking .kit .steam { animation: steam 1.1s ease-in-out infinite; }
+@keyframes steam { 0% { opacity: 0; transform: translateY(4px); } 40% { opacity: .9; } 100% { opacity: 0; transform: translateY(-6px); } }
+.ding .kit .bell { animation: ding .6s; transform-origin: 50% 100%; transform-box: fill-box; }
+@keyframes ding { 20% { transform: rotate(-10deg); } 40% { transform: rotate(9deg); } 60% { transform: rotate(-6deg); } 80% { transform: rotate(3deg); } }
+.clatter .kit .pan { animation: clatter .45s; transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes clatter { 20% { transform: translate(-3px, -3px) rotate(-6deg); } 40% { transform: translate(3px, 0) rotate(5deg); } 60% { transform: translate(-2px, -2px) rotate(-3deg); } 80% { transform: translate(1px, 0) rotate(1deg); } }
+@media (max-width: 640px) { .kit { zoom: .9; } }
+.cert { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); top: 120px; z-index: 2; background: #fdf6e3; color: #4a3520; border: 5px solid #8a6036; box-shadow: 0 4px 10px rgba(0,0,0,.25); padding: 6px 12px 8px; text-align: center; transform: rotate(2deg); display: grid; font-family: var(--display); }
+.cert small { font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; } .cert b { font-size: 1.25rem; text-transform: uppercase; line-height: 1; color: #a14c00; } .cert i { font-family: var(--body); font-size: .62rem; }
+@media (max-width: 640px) { .cert { top: 96px; padding: 4px 8px 6px; } .cert b { font-size: 1rem; } }
+/* binder and specials */
+.bind .label { color: var(--lamp-ink); }
+.mm-sec { margin: 6px 0 0; font-family: var(--display); text-transform: uppercase; font-size: 1.3rem; background: var(--paper); color: var(--paper-ink); padding: 4px 10px; justify-self: start; }
+.mm-item.sp { cursor: default; gap: 6px; }
+.rv.one { min-height: 0; } .rv.mono { font-family: var(--mono); font-size: 15px; }
+.sp-ticket { margin-bottom: 4px; }
+.bindlist details { background: var(--paper); color: var(--paper-ink); border-radius: 6px; padding: 10px 14px; }
+.bindlist summary { cursor: pointer; font-family: var(--display); font-size: 1.2rem; text-transform: uppercase; }
+.bindlist details[open] { display: grid; gap: 8px; } .bindlist p { margin: 0; }
+.bindlist .locked { opacity: .55; }
 @media (max-width: 420px) { .mm-grid { grid-template-columns: minmax(0, 1fr); } .mm-item { min-height: 0; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
@@ -281,6 +309,7 @@ footer { font-size: .82rem; color: var(--muted); padding-block: 0 30px; }
         <div class="label" id="rankCount">0 tickets cleared</div>
       </div>
     </div>
+    <div class="cert" id="cert" hidden aria-label="Certificate: Chef Patron"><small>Python Kitchen</small><b>Chef Patron</b><i>Graduated with honours</i></div>
     <div class="stage">
       <div class="chef brows-angry" id="chef" aria-hidden="true">
         <svg viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
@@ -325,6 +354,7 @@ footer { font-size: .82rem; color: var(--muted); padding-block: 0 30px; }
     </div>
   </div>
   <div class="pass">
+    <div class="counter" id="counter" aria-hidden="true"></div>
     <div class="inner gutter-x">
       <nav class="rail" aria-label="Tickets on the rail"><div class="rail-inner" id="rail"></div></nav>
     </div>
@@ -864,6 +894,7 @@ function renderRail() {
   $("rankName").textContent = rank;
   $("rankBar").style.width = (n / LEVELS.length * 100) + "%";
   $("rankCount").textContent = `${n} of ${LEVELS.length} tickets cleared`;
+  if (typeof renderPass === "function") renderPass();
   const act = $("rail").querySelector(".active"); if (act) act.scrollIntoView({ block: "nearest", inline: "center" });
 }
 function addTryButtons(root) {
@@ -900,20 +931,21 @@ function loadLevel(i, speak = true) {
   renderRail(); renderTicket();
   $("verdict").innerHTML = "";
   $("consoleT").innerHTML = `<span class="dim">Output from print() shows up here.</span>`;
-  if (speak) say(LEVELS[i].bark);
+  if (speak) { say(LEVELS[i].bark); if (typeof maybePage === "function") maybePage(); }
 }
 
 async function runTicket() {
   if (ENGINE.status !== "ready") return;
   const i = state.current, l = LEVELS[i], code = editors.T.ta.value;
   const btn = $("runT"); btn.dataset.busy = "1"; btn.disabled = true; btn.textContent = "Cooking…";
-  $("verdict").innerHTML = "";
+  $("verdict").innerHTML = ""; passReact("cooking");
   let v;
   try { v = await PK.judge(l, code, (c, inputs) => ENGINE.run(c, inputs)); }
   catch (e) { v = { ok: false, type: "error", r: { out: "", log: [], error: { type: "EngineError", msg: String(e), line: null } } }; }
   const shownRun = (v.r || v.first);
   $("consoleT").innerHTML = (shownRun && showLog(shownRun)) || `<span class="dim">(nothing was printed)</span>`;
   const box = $("verdict");
+  passReact(v.ok ? "ding" : "clatter");
   if (v.ok) {
     if (!state.done.includes(i)) state.done.push(i);
     save(); renderRail(); renderTicket();
@@ -1086,6 +1118,17 @@ function closeMenu(to) { $("mmenu").hidden = true; mmScreen = null; document.bod
 function openMenu(screen, arg) {
   mmScreen = screen; const m = $("mmenu"), b = $("mmBody"); m.hidden = false; document.body.style.overflow = "hidden"; m.scrollTop = 0; hideCoach();
   const head = t => `<div class="mm-head"><h2>${t}</h2><button class="btn" type="button" id="mmBack">Back</button></div>`;
+  if (screen === "page") { const m = PK.MANUAL[arg];
+    b.innerHTML = `<div class="mm-head"><h2>Recipe binder</h2></div>` + pageHTML(m, arg) + `<button class="mm-big" type="button" id="pgGo"><b>Got it</b><span>On to ticket ${m.at + 1}: ${esc(LEVELS[m.at].title)}</span></button>`;
+    wireTry(b); $("pgGo").addEventListener("click", () => closeMenu()); say(`New on the menu: ${m.title}. Read it, then get cooking.`, "happy"); return; }
+  if (screen === "binder") {
+    b.innerHTML = head("Recipe binder") + `<div class="mm-card"><p>A page on every new idea, unlocked as you reach it. Each one has an example to try at the practice station.</p></div><div class="bindlist">` +
+      PK.MANUAL.map((m, k) => unlocked(m.at) ? `<details><summary>${esc(m.title)}</summary><p>${esc(m.what)}</p><pre class="qz-code">${esc(m.code)}</pre><p class="qz-why"><b>Remember:</b> ${esc(m.tip)}</p><div><button class="btn" type="button" data-try="${k}">Try it at the practice station</button></div></details>` : `<details class="locked"><summary>🔒 ${esc(m.title)}</summary><p>Unlocks at ticket ${m.at + 1}.</p></details>`).join("") + `</div>`;
+    $("mmBack").addEventListener("click", () => openMenu("home")); wireTry(b); return; }
+  if (screen === "specials") return specialsScreen(b, head);
+  if (screen === "spmake") return spMakeScreen(b, head);
+  if (screen === "spshare") return spShareScreen(b, head, arg);
+  if (screen === "spplay") return spPlayScreen(b, head, arg);
   if (screen === "home") {
     const n = state.done.length, all = n >= LEVELS.length, cur = LEVELS[state.current], qOpen = quizzesOpen(), qDone = Object.keys(state.quiz).length;
     b.innerHTML = `<h1 class="mm-title">Python <span>Kitchen</span></h1>
@@ -1095,6 +1138,8 @@ function openMenu(screen, arg) {
         <button class="mm-item" type="button" data-go="practice"><b>Practice station</b><span>Write anything and run it. Nothing is marked.</span></button>
         <button class="mm-item" type="button" data-go="cookbook"><b>Cookbook</b><span>The whole course on one shelf.</span></button>
         <button class="mm-item" type="button" data-mm="quizzes"><b>Recap quizzes</b><span>${qOpen.some(Boolean) ? `${qDone} of ${PK.QUIZZES.length} taken` : "Unlock one by finishing a service"}</span></button>
+        <button class="mm-item" type="button" data-mm="binder"><b>Recipe binder</b><span>One page on every new idea you've met.</span></button>
+        <button class="mm-item" type="button" data-mm="specials"><b>Chef's specials</b><span>${graduated() ? "Write your own tickets and share them." : "Cook tickets written by friends."}</span></button>
         <button class="mm-item" type="button" data-go="office"><b>Office</b><span>Your progress, backups and starting again.</span></button>
         <button class="mm-item" type="button" data-mm="settings"><b>Settings</b><span>Chef's voice: ${state.voice ? "on" : "off"}.</span></button>
         <button class="mm-item" type="button" data-mm="review"><b>Leave a review</b><span>Tell Kris what you think. He reads every one.</span></button>
@@ -1192,6 +1237,193 @@ $("voiceInfo").addEventListener("click", () => { const t = $("voiceTip"), open =
 document.addEventListener("click", e => { const t = $("voiceTip"); if (!t.hidden && !e.target.closest("#voiceTip") && !e.target.closest("#voiceInfo")) { t.hidden = true; $("voiceInfo").setAttribute("aria-expanded", "false"); } });
 document.addEventListener("keydown", e => { if (e.key === "Escape") { if (!$("voiceTip").hidden) { $("voiceTip").hidden = true; $("voiceInfo").setAttribute("aria-expanded", "false"); } else if (!$("mmenu").hidden && mmScreen !== "home") openMenu("home"); } });
 
+
+/* =================== THE PASS: kit that builds up as you clear tickets (2.2) =================== */
+/* One piece of kit per cleared ticket, drawn in SVG. [name, left %, row (0 back, 1 front), width, height, svg body].
+   Back-row kit sits a little higher and smaller, so the pass gets more cluttered as you go. */
+const KIT = [
+  ["Chopping board", 30, 1, 64, 22, '<rect x="2" y="8" width="60" height="12" rx="4" fill="#b98652"/><rect x="2" y="8" width="60" height="4" rx="2" fill="#d4a46c"/><circle cx="55" cy="14" r="2.5" fill="#8a6036"/>'],
+  ["Ticket spike", 8, 0, 18, 44, '<rect x="2" y="38" width="14" height="5" rx="2" fill="#6b7780"/><rect x="8" y="4" width="2" height="36" fill="#9aa6ae"/><rect x="3" y="14" width="12" height="14" fill="#fdfdfb" stroke="#c9d1d6"/><rect x="5" y="18" width="8" height="1.5" fill="#9aa6ae"/><rect x="5" y="22" width="6" height="1.5" fill="#9aa6ae"/>'],
+  ["Salt and pepper", 46, 1, 26, 26, '<rect x="2" y="6" width="9" height="19" rx="3" fill="#f4f6f7" stroke="#b7c1c9"/><rect x="2" y="4" width="9" height="4" rx="2" fill="#b7c1c9"/><rect x="15" y="6" width="9" height="19" rx="3" fill="#3a3f44"/><rect x="15" y="4" width="9" height="4" rx="2" fill="#b7c1c9"/>'],
+  ["Utensil tub", 16, 1, 26, 40, '<rect x="5" y="20" width="16" height="19" rx="2" fill="#a9b4bc"/><rect x="5" y="20" width="16" height="3" fill="#d3dadf"/><rect x="8" y="4" width="2.5" height="18" fill="#7d8a93" transform="rotate(-10 9 20)"/><ellipse cx="9" cy="5" rx="3" ry="4" fill="#7d8a93" transform="rotate(-10 9 20)"/><rect x="14" y="2" width="2.5" height="20" fill="#b98652" transform="rotate(8 15 20)"/><rect x="17" y="8" width="2" height="14" fill="#7d8a93" transform="rotate(18 18 20)"/>'],
+  ["Stack of plates", 62, 1, 40, 22, '<ellipse cx="20" cy="18" rx="18" ry="3.5" fill="#d3dadf"/><rect x="2" y="9" width="36" height="9" fill="#fdfdfb"/><ellipse cx="20" cy="9" rx="18" ry="3.5" fill="#fdfdfb" stroke="#c9d1d6"/><path d="M2 12 H38 M2 15 H38" stroke="#dfe5e9"/>'],
+  ["Tea towel", 92, 1, 30, 18, '<rect x="2" y="6" width="26" height="11" rx="2" fill="#f4f6f7"/><rect x="2" y="9" width="26" height="2" fill="#4a7fc0"/><rect x="2" y="13" width="26" height="1.5" fill="#4a7fc0"/>'],
+  ["Ketchup", 52, 0, 14, 36, '<rect x="2" y="10" width="10" height="25" rx="4" fill="#c0392b"/><path d="M4 10 L7 2 L10 10 Z" fill="#c0392b"/><rect x="3" y="18" width="8" height="7" fill="#fdfdfb"/>'],
+  ["Mustard", 56, 0, 14, 36, '<rect x="2" y="10" width="10" height="25" rx="4" fill="#e7b416"/><path d="M4 10 L7 2 L10 10 Z" fill="#e7b416"/><rect x="3" y="18" width="8" height="7" fill="#fdfdfb"/>'],
+  ["Saucepan", 74, 0, 46, 26, '<rect x="6" y="8" width="26" height="17" rx="3" fill="#9aa6ae"/><rect x="6" y="8" width="26" height="4" fill="#c9d1d6"/><rect x="32" y="12" width="13" height="4" rx="2" fill="#3a3f44"/><rect x="10" y="4" width="18" height="4" rx="2" fill="#7d8a93"/><circle cx="19" cy="3" r="2" fill="#3a3f44"/>'],
+  ["Lemons", 38, 1, 30, 20, '<ellipse cx="15" cy="16" rx="13" ry="4" fill="#e6ebee"/><ellipse cx="10" cy="11" rx="6" ry="5" fill="#f2d33a"/><ellipse cx="19" cy="10" rx="6" ry="5" fill="#f5dc4c"/><ellipse cx="14" cy="6" rx="5" ry="4.5" fill="#f2d33a"/>'],
+  ["Stockpot", 86, 0, 42, 44, '<g class="steam"><path d="M14 14 q-4 -6 0 -12" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".8"/><path d="M22 14 q4 -6 0 -12" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".8"/><path d="M30 14 q-4 -6 0 -12" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".8"/></g><rect x="6" y="16" width="32" height="27" rx="3" fill="#a9b4bc"/><rect x="6" y="16" width="32" height="5" fill="#d3dadf"/><rect x="1" y="22" width="6" height="4" rx="2" fill="#3a3f44"/><rect x="37" y="22" width="6" height="4" rx="2" fill="#3a3f44"/>'],
+  ["Frying pan", 24, 0, 52, 18, '<g class="pan"><ellipse cx="18" cy="11" rx="16" ry="6" fill="#2d3338"/><ellipse cx="18" cy="9.5" rx="13" ry="4" fill="#454d54"/><rect x="33" y="8" width="18" height="4" rx="2" fill="#2d3338" transform="rotate(-8 33 10)"/></g>'],
+  ["Basil", 68, 0, 24, 34, '<path d="M5 22 H19 L17 33 H7 Z" fill="#c4643a"/><rect x="4" y="20" width="16" height="4" rx="1" fill="#a14e2c"/><ellipse cx="9" cy="14" rx="5" ry="7" fill="#3f8f3a"/><ellipse cx="16" cy="12" rx="5" ry="8" fill="#4fa84a"/><ellipse cx="12" cy="7" rx="4" ry="6" fill="#3f8f3a"/>'],
+  ["Olive oil", 4, 1, 14, 40, '<rect x="3" y="14" width="9" height="25" rx="3" fill="#6b8f2a" opacity=".9"/><rect x="5.5" y="4" width="4" height="11" fill="#6b8f2a"/><rect x="5" y="1" width="5" height="4" rx="1" fill="#3a3f44"/><rect x="3" y="22" width="9" height="8" fill="#f4e7c2"/>'],
+  ["Whisk", 80, 1, 22, 40, '<path d="M4 22 H18 L16 39 H6 Z" fill="#d3dadf"/><rect x="10" y="4" width="2" height="18" fill="#7d8a93"/><ellipse cx="11" cy="6" rx="4" ry="6" fill="none" stroke="#9aa6ae" stroke-width="1.5"/><ellipse cx="11" cy="6" rx="2" ry="6" fill="none" stroke="#9aa6ae" stroke-width="1.5"/>'],
+  ["Bread basket", 42, 0, 36, 22, '<path d="M3 10 H33 L29 21 H7 Z" fill="#b98652"/><path d="M5 14 H31 M6 17 H30" stroke="#8a6036"/><ellipse cx="12" cy="9" rx="7" ry="5" fill="#e0a85a"/><ellipse cx="23" cy="8" rx="8" ry="5" fill="#d4943e"/>'],
+  ["Squeeze bottles", 96, 0, 24, 34, '<rect x="2" y="12" width="8" height="21" rx="3" fill="#fdfdfb" stroke="#c9d1d6"/><path d="M4 12 L6 4 L8 12 Z" fill="#c9d1d6"/><rect x="13" y="12" width="8" height="21" rx="3" fill="#6b3d22"/><path d="M15 12 L17 4 L19 12 Z" fill="#6b3d22"/>'],
+  ["Tomatoes", 34, 0, 30, 20, '<circle cx="9" cy="12" r="7" fill="#d9412f"/><circle cx="21" cy="12" r="7" fill="#c0392b"/><path d="M7 5 l2 2 l2 -2 M19 5 l2 2 l2 -2" stroke="#3f8f3a" stroke-width="2" fill="none"/>'],
+  ["Service bell", 50, 1, 28, 22, '<g class="bell"><rect x="2" y="18" width="24" height="4" rx="2" fill="#7d8a93"/><path d="M5 18 Q14 2 23 18 Z" fill="#e0b13a"/><path d="M8 15 Q14 5 18 9" stroke="#f6d77a" stroke-width="2" fill="none"/><rect x="12.5" y="3" width="3" height="4" rx="1" fill="#7d8a93"/></g>'],
+  ["Tall plate stack", 66, 0, 40, 34, '<rect x="2" y="8" width="36" height="24" fill="#fdfdfb"/><ellipse cx="20" cy="32" rx="18" ry="3" fill="#d3dadf"/><ellipse cx="20" cy="8" rx="18" ry="3.5" fill="#fdfdfb" stroke="#c9d1d6"/><path d="M2 12 H38 M2 16 H38 M2 20 H38 M2 24 H38 M2 28 H38" stroke="#dfe5e9"/>'],
+  ["Knife block", 20, 0, 30, 40, '<path d="M4 18 L26 12 L26 39 L4 39 Z" fill="#6b4a2a"/><rect x="9" y="2" width="3" height="17" fill="#c9d1d6" transform="rotate(-15 10 18)"/><rect x="15" y="2" width="3" height="14" fill="#c9d1d6" transform="rotate(-15 16 16)"/><rect x="21" y="3" width="3" height="11" fill="#c9d1d6" transform="rotate(-15 22 14)"/>'],
+  ["Pepper mill", 12, 0, 14, 42, '<rect x="3" y="10" width="8" height="31" rx="3" fill="#4a2f22"/><ellipse cx="7" cy="10" rx="5" ry="4" fill="#5c3a28"/><circle cx="7" cy="4" r="2.5" fill="#7d8a93"/>'],
+  ["Kitchen timer", 58, 1, 22, 22, '<circle cx="11" cy="12" r="9" fill="#fdfdfb" stroke="#c0392b" stroke-width="3"/><path d="M11 12 L11 6 M11 12 L15 14" stroke="#1d2429" stroke-width="1.8" stroke-linecap="round"/><rect x="9" y="0" width="4" height="3" rx="1" fill="#c0392b"/>'],
+  ["Plated dish", 72, 1, 44, 20, '<ellipse cx="22" cy="14" rx="20" ry="5" fill="#fdfdfb" stroke="#c9d1d6"/><ellipse cx="18" cy="11" rx="8" ry="4" fill="#8a4b2a"/><ellipse cx="27" cy="11" rx="6" ry="3.5" fill="#f2c14e"/><circle cx="22" cy="8" r="2.5" fill="#4fa84a"/>'],
+  ["Brass bell trophy", 88, 1, 28, 34, '<rect x="5" y="28" width="18" height="5" rx="1" fill="#6b4a2a"/><path d="M8 28 Q14 4 20 28 Z" fill="#e0b13a"/><path d="M11 24 Q14 10 16 14" stroke="#f6d77a" stroke-width="2" fill="none"/><circle cx="14" cy="5" r="2.5" fill="#e0b13a"/>'],
+];
+let passShown = null;
+function renderPass() {
+  const box = $("counter"); if (!box) return;
+  const n = Math.min(KIT.length, state.done.length), prev = passShown; passShown = n;
+  if (!box.childElementCount) box.innerHTML = KIT.map(([name, left, row, w, h, svg], k) =>
+    `<div class="kit r${row}" data-k="${k}" style="left:${left}%;width:${w}px;height:${h}px;z-index:${row ? 3 : 1}" title="${esc(name)}"><svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}">${svg}</svg></div>`).join("");
+  box.querySelectorAll(".kit").forEach(el => { const k = +el.dataset.k, on = k < n; el.classList.toggle("on", on); if (on && prev != null && k >= prev) { el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); } });
+  $("cert").hidden = !state.done.includes(LEVELS.length - 1);
+}
+function passReact(kind) {
+  const box = $("counter"); if (!box) return;
+  box.classList.remove("ding", "clatter"); void box.offsetWidth;
+  if (kind === "cooking") box.classList.add("cooking");
+  else { box.classList.remove("cooking"); if (kind) box.classList.add(kind); }
+}
+
+
+/* =================== RECIPE BINDER: a short page before each new idea (2.2) =================== */
+state.seenPage = state.seenPage || {};
+const pageFor = i => PK.MANUAL.find(m => m.at === i);
+function pageHTML(m, k) {
+  return `<div class="mm-card bind"><span class="label">New on the menu</span><h3>${esc(m.title)}</h3><p>${esc(m.what)}</p>
+    <pre class="qz-code">${esc(m.code)}</pre><p class="qz-why"><b>Remember:</b> ${esc(m.tip)}</p>
+    <div class="qz-row"><button class="btn" type="button" data-try="${k}">Try it at the practice station</button></div></div>`;
+}
+function wireTry(root) { root.querySelectorAll("[data-try]").forEach(x => x.addEventListener("click", () => { const m = PK.MANUAL[+x.dataset.try]; closeMenu(); loadIntoPractice(m.code, m.inputs || "", "Go on, run it. Then change something and run it again."); })); }
+function maybePage() {
+  if (!$("mmenu").hidden || $("view-tickets").hidden) return false;
+  const m = pageFor(state.current); if (!m || state.seenPage[m.at] || state.done.includes(state.current)) return false;
+  state.seenPage[m.at] = 1; save(); openMenu("page", PK.MANUAL.indexOf(m)); return true;
+}
+
+/* =================== CHEF'S SPECIALS: write your own tickets and share them (2.2) =================== */
+/* A special is the order text, optional inputs and starter code, and the exact output it should print.
+   The maker's own solution is run to work out that output, and is never shared. */
+state.specials = state.specials || { mine: [], got: [], cleared: [] };
+const SP_PREFIX = "PKS1.";
+const graduated = () => state.done.includes(LEVELS.length - 1);
+const b64e = str => btoa(unescape(encodeURIComponent(str))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+const b64d = str => decodeURIComponent(escape(atob(str.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((str.length + 3) % 4))));
+function spHash(o) { let h = 7; const s = JSON.stringify([o.t, o.o, o.i, o.st, o.ex]); for (let k = 0; k < s.length; k++) h = (h * 31 + s.charCodeAt(k)) >>> 0; return h.toString(36); }
+function spCode(sp) { return SP_PREFIX + b64e(JSON.stringify({ v: 1, t: sp.t, by: sp.by, o: sp.o, i: sp.i, st: sp.st, ex: sp.ex })); }
+function spRead(text) {
+  const s = String(text || "").trim().replace(/^.*#special=/, "").replace(/\s+/g, "");
+  if (!s.startsWith(SP_PREFIX)) throw new Error("That isn't a special. Special codes start with PKS1.");
+  let d; try { d = JSON.parse(b64d(s.slice(SP_PREFIX.length))); } catch (e) { throw new Error("That code is incomplete or got changed. Copy the whole thing again."); }
+  const str = (x, n) => typeof x === "string" ? x.slice(0, n) : "";
+  const sp = { t: str(d.t, 40) || "Chef's special", by: str(d.by, 20) || "A chef", o: str(d.o, 400), i: Array.isArray(d.i) ? d.i.slice(0, 20).map(x => str(x, 80)) : [], st: str(d.st, 4000), ex: str(d.ex, 4000) };
+  if (!sp.ex || !sp.o) throw new Error("That special is missing its order. Ask your friend for a fresh code.");
+  sp.id = spHash(sp); return sp;
+}
+const spUrl = sp => `${location.protocol.startsWith("http") && !location.host.includes("claude") ? location.origin + location.pathname : "https://kralnugames.com/kitchen-coder/"}#special=${spCode(sp)}`;
+function spShare(sp, msgId) {
+  const text = `🍳 Can you cook my Python Kitchen special, "${sp.t}"?\n\n${spUrl(sp)}`;
+  const done = m => { const el = $(msgId); if (el) el.textContent = m; };
+  if (navigator.share) navigator.share({ text }).then(() => done("Shared."), () => {});
+  else { try { navigator.clipboard.writeText(text).then(() => done("Copied. Paste it into a message to a friend."), () => done("Copy blocked. Long-press the code below to copy it.")); } catch (e) { done("Copy blocked. Long-press the code below to copy it."); } }
+}
+function spAdd(sp) { const all = [...state.specials.mine, ...state.specials.got]; if (!all.some(x => x.id === sp.id)) state.specials.got.unshift(sp); state.specials.got = state.specials.got.slice(0, 40); save(); return sp; }
+const spFind = id => [...state.specials.mine, ...state.specials.got].find(x => x.id === id);
+let spDraft = { t: "", o: "", i: "", st: "", sol: "" }, spTested = null, spFlash = "";
+function specialsScreen(b, head) {
+  const card = (sp, mine) => `<div class="mm-item sp"><b>${esc(sp.t)}${state.specials.cleared.includes(sp.id) ? " ✓" : ""}</b><span>${mine ? "Your special" : `By ${esc(sp.by)}`} · ${esc(sp.o.slice(0, 80))}${sp.o.length > 80 ? "…" : ""}</span>
+    <div class="qz-row"><button class="btn primary" type="button" data-cook="${sp.id}">Cook it</button>${mine ? `<button class="btn" type="button" data-share="${sp.id}">Share</button>` : `<button class="btn" type="button" data-drop="${sp.id}">Remove</button>`}</div></div>`;
+  b.innerHTML = head("Chef's specials") + `${spFlash ? `<p class="qz-why">${esc(spFlash)}</p>` : ""}
+    <div class="mm-card"><p>Tickets written by other cooks. Cook a friend's special, or ${graduated() ? "write your own and send it to them." : "graduate (clear ticket 25) to write your own."}</p>
+      ${graduated() ? `<div><button class="btn primary" type="button" id="spNew">Write a special</button></div>` : ""}</div>
+    <div class="mm-card"><h3>Got a code from a friend?</h3><textarea class="rv" id="spIn" rows="2" placeholder="Paste a PKS1. code or link" spellcheck="false" autocapitalize="off" autocorrect="off"></textarea>
+      <div><button class="btn" type="button" id="spAddBtn">Add it to the board</button></div><p class="status" id="spMsg"></p></div>
+    ${state.specials.mine.length ? `<h3 class="mm-sec">Your specials</h3>` + state.specials.mine.map(sp => card(sp, true)).join("") : ""}
+    ${state.specials.got.length ? `<h3 class="mm-sec">From other cooks</h3>` + state.specials.got.map(sp => card(sp, false)).join("") : `<p class="mm-foot">No specials from friends yet. When someone sends you one, it shows up here.</p>`}`;
+  spFlash = "";
+  $("mmBack").addEventListener("click", () => openMenu("home"));
+  if ($("spNew")) $("spNew").addEventListener("click", () => openMenu("spmake"));
+  $("spAddBtn").addEventListener("click", () => { try { const sp = spAdd(spRead($("spIn").value)); spFlash = `Added "${sp.t}" by ${sp.by}.`; openMenu("specials"); } catch (e) { $("spMsg").textContent = e.message; } });
+  b.querySelectorAll("[data-cook]").forEach(x => x.addEventListener("click", () => openMenu("spplay", x.dataset.cook)));
+  b.querySelectorAll("[data-share]").forEach(x => x.addEventListener("click", () => openMenu("spshare", x.dataset.share)));
+  b.querySelectorAll("[data-drop]").forEach(x => x.addEventListener("click", () => { state.specials.got = state.specials.got.filter(s => s.id !== x.dataset.drop); save(); openMenu("specials"); }));
+}
+function spMakeScreen(b, head) {
+  const d = spDraft;
+  b.innerHTML = head("Write a special") + `<div class="mm-card">
+      <p>Write the order, then cook it yourself. Your answer works out exactly what diners must print, and it stays secret: only the order is shared.</p>
+      <label class="label" for="spT">Name of the special</label><input class="rv one" id="spT" maxlength="40" value="${esc(d.t)}" placeholder="Pudding Countdown">
+      <label class="label" for="spO">The order: what should their code do?</label><textarea class="rv" id="spO" maxlength="400" placeholder="Count down from 5 to 1, then print Puddings away!">${esc(d.o)}</textarea>
+      <label class="label" for="spI">Inputs, one per line (optional)</label><textarea class="rv mono" id="spI" rows="2" spellcheck="false" placeholder="Only if the code uses input()">${esc(d.i)}</textarea>
+      <label class="label" for="spS">Starter code for them (optional)</label><textarea class="rv mono" id="spS" rows="3" spellcheck="false" autocapitalize="off" autocorrect="off" placeholder="# anything to get them going">${esc(d.st)}</textarea>
+      <label class="label" for="spA">Your answer (kept secret)</label><textarea class="rv mono" id="spA" rows="6" spellcheck="false" autocapitalize="off" autocorrect="off" placeholder="for n in range(5, 0, -1):&#10;    print(n)&#10;print(&quot;Puddings away!&quot;)">${esc(d.sol)}</textarea>
+      <div class="qz-row"><span></span><button class="btn primary" type="button" id="spTest">Cook my answer</button></div>
+      <div id="spOut"></div></div>`;
+  $("mmBack").addEventListener("click", () => openMenu("specials"));
+  const keep = () => { spDraft = { t: $("spT").value, o: $("spO").value, i: $("spI").value, st: $("spS").value, sol: $("spA").value }; spTested = null; };
+  ["spT", "spO", "spI", "spS", "spA"].forEach(id => $(id).addEventListener("input", () => { keep(); $("spOut").innerHTML = ""; }));
+  $("spTest").addEventListener("click", async () => {
+    keep(); const d2 = spDraft, out = $("spOut");
+    if (!d2.t.trim() || !d2.o.trim() || !d2.sol.trim()) { out.innerHTML = `<p class="qz-why">Give it a name, an order and your answer first.</p>`; return; }
+    if (ENGINE.status !== "ready") { out.innerHTML = `<p class="qz-why">The stove is still lighting. Try again in a moment.</p>`; return; }
+    const ins = d2.i.replace(/\r/g, "").split("\n"); if (ins.length && ins[ins.length - 1] === "") ins.pop();
+    $("spTest").disabled = true; $("spTest").textContent = "Cooking…";
+    const r = await ENGINE.run(d2.sol, ins, 5000);
+    let st = null; if (!r.error && PK.tidy(r.out)) st = await ENGINE.run(d2.st || "", ins, 5000);
+    $("spTest").disabled = false; $("spTest").textContent = "Cook my answer";
+    if (r.error) { out.innerHTML = `<div class="verdict bad"><strong>Your answer doesn't cook</strong><div>${esc(friendly(r.error))}</div></div>`; return; }
+    if (!PK.tidy(r.out)) { out.innerHTML = `<div class="verdict bad"><strong>Nothing was printed</strong><div>A special needs output to check. Make your answer print something.</div></div>`; return; }
+    if (st && !st.error && PK.tidy(st.out) === PK.tidy(r.out)) { out.innerHTML = `<div class="verdict bad"><strong>Too easy</strong><div>The starter code already prints the right answer, so there's nothing to cook. Take some of it out.</div></div>`; return; }
+    spTested = { t: d2.t.trim().slice(0, 40), by: (state.cookName || "A chef").slice(0, 20), o: d2.o.trim().slice(0, 400), i: ins.slice(0, 20), st: d2.st.slice(0, 4000), ex: PK.tidy(r.out).slice(0, 4000) };
+    out.innerHTML = `<div class="verdict ok"><strong>It cooks!</strong><div>Diners will need to print exactly this:</div><pre class="qz-code">${esc(spTested.ex)}</pre>
+      <label class="label" for="spBy">Your chef name, shown on the special</label><input class="rv one" id="spBy" maxlength="20" value="${esc(state.cookName || "")}" placeholder="Chef Kris">
+      <div class="qz-row"><span></span><button class="btn primary" type="button" id="spSave">Put it on the board</button></div></div>`;
+    $("spSave").addEventListener("click", () => {
+      const by = $("spBy").value.trim().slice(0, 20); if (by) { state.cookName = by; } spTested.by = by || "A chef";
+      spTested.id = spHash(spTested);
+      if (!state.specials.mine.some(x => x.id === spTested.id)) state.specials.mine.unshift(spTested);
+      save(); const id = spTested.id; spDraft = { t: "", o: "", i: "", st: "", sol: "" }; spTested = null;
+      say("Now that's a special. Send it out and see who can cook it.", "happy");
+      openMenu("spshare", id);
+    });
+  });
+}
+function spShareScreen(b, head, id) {
+  const sp = spFind(id); if (!sp) return openMenu("specials");
+  b.innerHTML = head("Share your special") + `<div class="mm-card"><h3>${esc(sp.t)}</h3><p>${esc(sp.o)}</p>
+    <div><button class="btn primary" type="button" id="spSend">Send it to a friend</button></div><p class="status" id="spSendMsg">They tap the link and it opens straight to your special. They don't need to have finished the course.</p>
+    <label class="label" for="spCodeOut">Or copy the code</label><textarea class="rv mono" id="spCodeOut" rows="3" readonly>${esc(spCode(sp))}</textarea></div>`;
+  $("mmBack").addEventListener("click", () => openMenu("specials"));
+  $("spSend").addEventListener("click", () => spShare(sp, "spSendMsg"));
+}
+function spPlayScreen(b, head, id) {
+  const sp = spFind(id); if (!sp) return openMenu("specials");
+  const saved = (state.specials.code || {})[id];
+  b.innerHTML = head("Chef's special") + `<div class="ticket sp-ticket"><div class="ticket-head"><span>SPECIAL · BY ${esc(sp.by.toUpperCase())}</span><span>${state.specials.cleared.includes(id) ? "COOKED ✓" : "ON THE BOARD"}</span></div>
+      <h2>${esc(sp.t)}</h2><div class="sec"><h3>The order</h3><p>${esc(sp.o)}</p>${sp.i.length ? `<div>Order typed in: <code>${esc(sp.i.join(", "))}</code></div>` : ""}<div class="expect">${esc(sp.ex)}</div></div></div>
+    <div class="editor-wrap"><div class="editor-bar"><span>special.py</span><span class="engine">${ENGINE.status === "ready" ? "Python ready · Ctrl+Enter runs" : "Lighting the stove…"}</span></div>
+      <div class="editor"><div class="gut" id="gutS">1</div><textarea class="code" id="codeS" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-label="Special code editor"></textarea></div></div>
+    <div class="keys" data-for="S"></div>
+    <div class="actions"><button class="btn primary" type="button" id="runS">Send to the pass</button><button class="btn" type="button" id="resetS">Reset code</button></div>
+    <div id="verdictS"></div><div class="console" id="consoleS"><span class="dim">Output from print() shows up here.</span></div>`;
+  $("mmBack").addEventListener("click", () => openMenu("specials"));
+  editors.S = makeEditor($("codeS"), $("gutS"), v => { state.specials.code = state.specials.code || {}; state.specials.code[id] = v; save(); }, () => $("runS").click());
+  editors.S.set(saved ?? sp.st); buildKeys(b.querySelector('.keys[data-for="S"]'));
+  $("resetS").addEventListener("click", () => { editors.S.set(sp.st); if (state.specials.code) delete state.specials.code[id]; save(); });
+  $("runS").addEventListener("click", async () => {
+    const btn = $("runS"); if (btn.disabled) return; btn.disabled = true; btn.textContent = "Cooking…";
+    const r = await ENGINE.run(editors.S.ta.value, sp.i, 5000);
+    btn.disabled = false; btn.textContent = "Send to the pass";
+    $("consoleS").innerHTML = showLog(r) || `<span class="dim">(nothing was printed)</span>`;
+    if (r.error) { $("consoleS").innerHTML += `\n<span class="er">${esc(rawError(r.error))}</span>`; $("verdictS").innerHTML = `<div class="verdict bad"><strong>Sent back</strong><div>${esc(friendly(r.error))}</div></div>`; say(pick(ERR)); return; }
+    if (PK.tidy(r.out) === PK.tidy(sp.ex)) {
+      if (!state.specials.cleared.includes(id)) state.specials.cleared.push(id); save();
+      $("verdictS").innerHTML = `<div class="verdict ok"><strong>Special cooked!</strong><div>${esc(sp.by)}'s special, plated perfectly.</div></div>`; say(pick(WIN), "happy");
+    } else {
+      $("verdictS").innerHTML = `<div class="verdict bad"><strong>Not quite</strong><div class="diff"><div><span class="label">The special needs</span><pre>${esc(sp.ex)}</pre></div><div><span class="label">You printed</span><pre>${esc(PK.tidy(r.out)) || "(nothing)"}</pre></div></div></div>`; say(pick(FAIL));
+    }
+  });
+}
+
 /* =================== THE GUIDED FIRST TICKET (2.1) =================== */
 /* A quick tour of ticket 1 for brand-new players: the order, the stove, the pass. About a minute, very little reading. */
 let coachStep = -1, coachSpot = null;
@@ -1217,7 +1449,7 @@ function typeFirst() {
   tick();
 }
 function startCoach(force) { if (!force && (state.guided || state.done.length || state.current !== 0)) return; if (!$("mmenu").hidden) return; coachGo(0); }
-function maybeCoach() { if (coachStep >= 0) { coachGo(coachStep); return; } if (!state.guided && !state.done.length && state.current === 0 && !$("view-tickets").hidden) startCoach(); }
+function maybeCoach() { if (maybePage()) return; if (coachStep >= 0) { coachGo(coachStep); return; } if (!state.guided && !state.done.length && state.current === 0 && !$("view-tickets").hidden) startCoach(); }
 function coachAfterWin() { if (coachStep >= 0 && coachStep < 3 && state.current === 0) coachGo(3); }
 
 /* =================== BOOT =================== */
@@ -1234,8 +1466,15 @@ loadLevel(state.current, false);
 $("toTicket").addEventListener("click", () => $("ticket").scrollIntoView({ behavior: smooth(), block: "start" }));
 bubbleText.textContent = state.done.length ? `Back on the line. ${LEVELS[state.current].bark}` : "Right. New starter. Whites on, ears open. First ticket's on the rail. Tap a ticket to hear me call it!";
 const linked = ["practice", "cookbook", "office"].includes(location.hash.slice(1)) ? location.hash.slice(1) : "";
+const specialLink = /^#special=/.test(location.hash) ? location.hash : "";
 show(linked || "tickets");
-if (!linked) openMenu("home"); else maybeCoach();
+if (specialLink) openSpecialLink(specialLink); else if (!linked) openMenu("home"); else maybeCoach();
+function openSpecialLink(h) {
+  try { history.replaceState(null, "", location.pathname + location.search + "#tickets"); } catch (e) {}
+  try { const sp = spAdd(spRead(h)); openMenu("spplay", sp.id); say(`A special from ${sp.by}. Let's see what you've got.`, "happy"); }
+  catch (e) { spFlash = e.message; openMenu("specials"); }
+}
+window.addEventListener("hashchange", () => { if (/^#special=/.test(location.hash)) openSpecialLink(location.hash); });
 </script>
 <script>
 if ("serviceWorker" in navigator) { window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); }); }

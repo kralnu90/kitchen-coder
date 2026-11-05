@@ -42,6 +42,13 @@ function run(code, inputs) {
   checks++;
   if (!Array.isArray(PK.QUIZZES) || PK.QUIZZES.length < PK.SERVICES.length - 1) { failures++; console.log("FAIL quizzes: one per service needed"); }
   else PK.QUIZZES.forEach((qz, k) => qz.forEach((q, j) => { if (!q.q || !Array.isArray(q.o) || q.o.length < 2 || !(q.a >= 0 && q.a < q.o.length) || !q.why) { failures++; console.log(`FAIL quiz ${k + 1} question ${j + 1}`); } }));
+  // every recipe binder example must actually run, and point at a real ticket
+  for (const m of PK.MANUAL) {
+    checks++;
+    if (!(m.at >= 0 && m.at < PK.LEVELS.length) || !m.title || !m.what || !m.code) { failures++; console.log(`FAIL binder page ${m.title}: incomplete`); continue; }
+    const r = await run(m.code, m.inputs ? m.inputs.split("\n") : []);
+    if (r.error) { failures++; console.log(`FAIL binder page ${m.title}: example crashes`, r.error); }
+  }
   // the harness reports errors with the learner's line number
   const e = await run("x = 1\nprint(y)", []);
   checks++; if (!e.error || e.error.type !== "NameError" || e.error.line !== 2) { failures++; console.log("FAIL harness: NameError line number", e.error); }

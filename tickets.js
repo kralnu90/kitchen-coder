@@ -565,6 +565,33 @@ const RECIPES = [
 ];
 
 
+
+/* ---------- the recipe binder: one short page for each new idea, shown before the ticket that first uses it ---------- */
+const MANUAL = [
+  { at: 0, title: "print()", what: "Shows things on the screen. Text goes inside quote marks.", code: 'print("Yes, Chef!")', tip: "Capitals, spaces and punctuation inside the quotes all print exactly as you type them." },
+  { at: 1, title: "Variables", what: "A labelled tub. Put a value in with =, then use the name to get it back.", code: 'dish = "Soup"\nprint(dish)', tip: "No quotes around the name when you use it, or you'll print the word itself." },
+  { at: 2, title: "Numbers and maths", what: "Numbers have no quotes. + - * / work like a calculator, and // is whole-number division.", code: 'covers = 12\nprint(covers * 2)', tip: "Brackets go first, then * and /, then + and -." },
+  { at: 3, title: "f-strings", what: "Put an f before the quotes, then drop variables into the text with {curly brackets}.", code: 'table = 7\nprint(f"Table {table} is ready")', tip: "No f, no magic: the curly brackets print as they are." },
+  { at: 4, title: "input()", what: "Asks the person a question and waits for their answer. You get back whatever they type, as text.", code: 'name = input("Name? ")\nprint(f"Hi {name}")', inputs: "Kris", tip: "Save the answer in a variable or it's gone." },
+  { at: 5, title: "int()", what: "Turns text like \"4\" into the number 4, so you can do maths with it.", code: 'n = int(input("How many? "))\nprint(n * 2)', inputs: "4", tip: "input() always gives text, so you need int() before any maths." },
+  { at: 6, title: "String methods", what: "Tools that come with every piece of text. Add a dot and the tool's name.", code: 'order = "soup"\nprint(order.upper())\nprint(len(order))', tip: ".upper() .lower() .title() .strip() .replace(). len() counts the letters." },
+  { at: 7, title: "if / else", what: "Makes a decision. The indented lines under if only run when the test is True. Otherwise else runs.", code: 'temp = 3\nif temp <= 5:\n    print("Safe")\nelse:\n    print("Bin it")', tip: "== compares. The if line ends with a colon, and the next lines go in 4 spaces." },
+  { at: 8, title: "elif", what: "Short for else if. Checks more options in order and stops at the first True one.", code: 'mins = 4\nif mins < 3:\n    print("Rare")\nelif mins < 6:\n    print("Medium")\nelse:\n    print("Well done")', tip: "Put the most specific check first." },
+  { at: 9, title: "and, or, not", what: "Join tests together. and needs both, or needs either, not flips True and False.", code: 'hot = True\ncovered = False\nif hot and not covered:\n    print("Cover it!")', tip: "Each side needs its own full test: temp > 60 and temp < 75." },
+  { at: 10, title: "in", what: "Checks whether something is inside text, a list or a dictionary's keys.", code: 'menu = ["soup", "pie"]\nif "pie" in menu:\n    print("We have pie")', tip: "not in checks the opposite." },
+  { at: 11, title: "Lists", what: "Many values in one tub, in square brackets. Count positions from 0.", code: 'jobs = ["peel", "chop", "fry"]\nprint(jobs[0])\nprint(len(jobs))', tip: "[-1] is always the last item." },
+  { at: 12, title: "Changing lists", what: "Lists can grow and shrink while the program runs.", code: 'jobs = ["peel"]\njobs.append("chop")\njobs.remove("peel")\nprint(jobs)', tip: ".append() adds to the end. .insert(0, x) adds to the front." },
+  { at: 13, title: "for loops", what: "Repeats the indented lines once for every item, with the loop name holding the current item.", code: 'for dish in ["soup", "pie"]:\n    print(f"Plate {dish}")', tip: "The loop line ends with a colon, and the lines to repeat go in 4 spaces." },
+  { at: 14, title: "range()", what: "Gives a run of numbers for a for loop. range(3) is 0, 1, 2. range(1, 4) is 1, 2, 3.", code: 'for n in range(1, 4):\n    print(f"Minute {n}")', tip: "The end number is never included." },
+  { at: 15, title: "while loops", what: "Keeps repeating as long as the test stays True.", code: 'left = 3\nwhile left > 0:\n    print(left)\n    left -= 1', tip: "Something inside must change, or it never stops." },
+  { at: 16, title: "Running totals", what: "Start a tub at 0 before the loop, then add to it each time round.", code: 'total = 0\nfor price in [6, 12, 4]:\n    total += price\nprint(total)', tip: "Print the total after the loop, not inside it." },
+  { at: 18, title: "Functions", what: "A named recipe. Write it once with def, then use it whenever you like.", code: 'def call(dish):\n    print(f"{dish}, away!")\n\ncall("Soup")', tip: "Defining a function doesn't run it. Calling it does." },
+  { at: 19, title: "return", what: "Hands an answer back from a function, so you can store it or use it.", code: 'def double(n):\n    return n * 2\n\nprint(double(5))', tip: "return ends the function straight away." },
+  { at: 20, title: "Dictionaries", what: "Pairs of keys and values in curly brackets. Look things up by key.", code: 'prices = {"soup": 6, "pie": 12}\nprint(prices["pie"])', tip: "for item, price in prices.items(): loops over both." },
+  { at: 21, title: "Changing dictionaries", what: "Add or change a value by assigning to a key. Remove one with del.", code: 'prices = {"soup": 6}\nprices["cake"] = 5\nprices["soup"] = 7\nprint(prices)', tip: "Assigning to a key that exists replaces its value." },
+  { at: 22, title: "try / except", what: "Tries something that might go wrong, and catches the error so the program carries on.", code: 'try:\n    n = int("four")\nexcept ValueError:\n    print("Numbers only")', tip: "Only the lines inside try are protected." },
+];
+
 /* ---------- recap quizzes: one after each service. a = index of the right answer ---------- */
 const QUIZZES = [
   [ { q: "What does this print?", code: 'dish = "Soup"\nprint("dish")', o: ["Soup", "dish", "An error"], a: 1, why: "The quote marks make it the word dish. Without quotes, print(dish) would show what's in the tub: Soup." },
@@ -654,7 +681,7 @@ async function judge(level, code, run) {
   return { ok: true, first };
 }
 
-const PK = { SERVICES, LEVELS, RECIPES, QUIZZES, judge, scrub, tidy, sortLines };
+const PK = { SERVICES, LEVELS, RECIPES, QUIZZES, MANUAL, judge, scrub, tidy, sortLines };
 if (typeof module !== "undefined" && module.exports) module.exports = PK;
 else root.PK = PK;
 })(typeof window !== "undefined" ? window : globalThis);
