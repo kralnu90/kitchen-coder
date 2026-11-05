@@ -47,6 +47,10 @@ function run(code, inputs) {
   checks++; if (!n.error || n.error.type !== "EOFError") { failures++; console.log("FAIL harness: running out of inputs", n.error); }
   const p = await run("for i in range(10**7):\n    print(i)", []);
   checks++; if (!p.error || p.error.type !== "RuntimeError") { failures++; console.log("FAIL harness: output cap", p.error); }
+  // harness.py must load cleanly inside Pyodide, where it also runs as __main__ with no stdin
+  checks++;
+  const emb = spawnSync(PY, ["-c", "import sys; sys.platform='emscripten'; sys.stdin=None; g={'__name__':'__main__'}; exec(open(sys.argv[1]).read(), g); print(g['pk_run']('print(1)','[]'))", HARNESS], { encoding: "utf8", timeout: 5000 });
+  if (emb.status !== 0 || !/"out": "1\\n"/.test(emb.stdout)) { failures++; console.log("FAIL harness: loading as __main__ inside Pyodide", emb.stderr || emb.stdout); }
   console.log(`${checks} checks, ${failures} failure${failures === 1 ? "" : "s"}`);
   process.exit(failures ? 1 : 0);
 })();

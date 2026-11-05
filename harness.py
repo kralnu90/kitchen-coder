@@ -74,7 +74,8 @@ def pk_run(code, inputs_json="[]"):
     return json.dumps({"out": out, "log": rec.log, "error": error})
 
 
-if __name__ == "__main__":
-    # Command-line use for the test suite: JSON {"code": ..., "inputs": [...]} on stdin.
+if __name__ == "__main__" and sys.platform != "emscripten":
+    # Command-line use for the test suite only (never inside Pyodide, where
+    # this file also runs as __main__): JSON {"code": ..., "inputs": [...]} on stdin.
     job = json.loads(sys.stdin.read())
     sys.stdout.write(pk_run(job["code"], json.dumps(job.get("inputs") or [])))

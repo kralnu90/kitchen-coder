@@ -724,7 +724,7 @@ const ENGINE = (() => {
     document.querySelectorAll(".run-btn").forEach(b => { b.disabled = st !== "ready" || b.dataset.busy === "1"; });
     const note = $("engineNote");
     if (st === "ready") { note.hidden = true; clearTimeout(slowTimer); }
-    else if (st === "failed") { note.hidden = false; note.innerHTML = `<b>Python couldn't load.</b> ${esc(detail || "")} Check your connection, then <button type="button" class="linkish" id="engineRetry">try again</button>.`; $("engineRetry").onclick = () => boot(); }
+    else if (st === "failed") { note.hidden = false; const short = String(detail || "").trim().split("\n").filter(Boolean).pop() || ""; note.innerHTML = `<b>Python couldn't load.</b> Check your connection, then <button type="button" class="linkish" id="engineRetry">try again</button>.${short ? `<br><small class="status">Details: ${esc(short.slice(0, 160))}</small>` : ""}`; $("engineRetry").onclick = () => boot(); }
     else if (st === "loading") { clearTimeout(slowTimer); slowTimer = setTimeout(() => { if (status === "loading") { note.hidden = false; note.innerHTML = "<b>Lighting the stove.</b> The first visit downloads real Python (about 10MB). After that it's saved on this device and works offline."; } }, 2500); }
   }
   function boot(restarting) {
