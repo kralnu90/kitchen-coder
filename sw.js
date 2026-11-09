@@ -35,6 +35,8 @@ self.addEventListener("fetch", (e) => {
   const req = e.request;
   if (req.method !== "GET") return;
   const url = new URL(req.url);
+  // version.json is the update check: always ask the network, never keep a copy.
+  if (url.pathname.endsWith('/version.json')) return;
 
   if (url.href.startsWith(PYODIDE_BASE)) {
     // Versioned engine files never change: saved copy first.
@@ -46,7 +48,7 @@ self.addEventListener("fetch", (e) => {
   }
 
   if (url.origin === self.location.origin) {
-    e.respondWith(fetch(req).then(res => {
+    e.respondWith(fetch(req, req.mode === "navigate" ? { cache: "no-cache" } : undefined).then(res => {
       if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
       return res;
     }).catch(() => caches.match(req, { ignoreSearch: true }).then(r => r || (req.mode === "navigate" ? caches.match("index.html") : undefined))));

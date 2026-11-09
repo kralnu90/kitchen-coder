@@ -102,3 +102,9 @@ MIT. See [LICENSE](LICENSE).
 ---
 
 Ideas, design and testing by Kris. Built with Claude, an AI by Anthropic.
+
+## Updates
+
+The game checks for a newer version when it opens and when you come back to it. If there is one, players see a small "A new version is ready" notice with an **Update** button, and there's a **Get the latest version** button in the menu at any time.
+
+When pushing an update: change the game's version number and put the same value in `version.json`.
